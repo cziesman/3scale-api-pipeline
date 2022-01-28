@@ -9,5 +9,6 @@ pipeline {
     stage('First stage') {
      
       echo 'Inside first stage'
+    }
   }
 }
