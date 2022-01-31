@@ -44,6 +44,7 @@ pipeline {
                             environment: [baseSystemName                : "widget",
                                           privateBaseUrl                : privateBaseURL,
                                           privateBasePath               : "/api/",
+                                          targetSystemName              : "widget-api",
                                           publicStagingWildcardDomain   : publicStagingBaseURL,
                                           publicProductionWildcardDomain: publicProductionBaseURL],
                             toolbox: [openshiftProject: namespace,
@@ -53,10 +54,19 @@ pipeline {
                                       secretName      : secretName],
                             service: [:],
                             applications: [
-                                    [name: "Widget Application", description: "The widget App", plan: "Widget Unlimited", account: developerAccountId]
+                                    [name: "Widget Application",
+                                     description: "The widget App",
+                                     plan: "Widget Unlimited",
+                                     account: developerAccountId]
                             ],
                             applicationPlans: [
-                                    [systemName: "widget-unlimited", name: "Widget Unlimited", defaultPlan: true, published: true],
+                                    [systemName     : "widget-unlimited",
+                                     name           : "Widget Unlimited",
+                                     defaultPlan    : true,
+                                     published      : true,
+                                     costPerMonth   : 0.0,
+                                     setupFee       : 5.0,
+                                     trialPeriodDays: 30]
                             ]
                     )
 
@@ -64,11 +74,40 @@ pipeline {
                 }
             }
         }
-        stage('Provision config map') {
+
+        stage('List properties') {
             steps {
                 script {
 
                     service.getEnvironment().properties.each { echo "$it.key -> $it.value" }
+                }
+            }
+        }
+
+        stage("Import OpenAPI") {
+            steps {
+                script {
+
+                    service.importOpenAPI()
+                    echo "Service with system_name ${service.environment.targetSystemName} created !"
+                }
+            }
+        }
+
+        stage("Create an Application Plan") {
+            steps {
+                script {
+
+                    service.applyApplicationPlans()
+                }
+            }
+        }
+
+        stage("Create an Application") {
+            steps {
+                script {
+
+                    service.applyApplication()
                 }
             }
         }
