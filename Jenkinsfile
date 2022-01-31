@@ -26,28 +26,37 @@ pipeline {
 
     stages {
 
+        stage('First stage') {
+            steps {
+                script {
+
+                    echo 'Inside first stage'
+                }
+            }
+        }
+
         stage("Prepare") {
             steps {
                 script {
 
                     service = toolbox.prepareThreescaleService(
                             openapi: [filename: "widget-api/swagger.yaml"],
-                            environment: [ baseSystemName: "widget",
-                                           privateBaseUrl: privateBaseURL,
-                                           privateBasePath: "/api/",
-                                           publicStagingWildcardDomain: publicStagingBaseURL,
-                                           publicProductionWildcardDomain: publicProductionBaseURL ],
-                            toolbox: [ openshiftProject: namespace,
-                                       destination: targetInstance,
-                                       image: "quay.io/redhat/3scale-toolbox",
-                                       insecure: disableTlsValidation,
-                                       secretName: secretName],
+                            environment: [baseSystemName                : "widget",
+                                          privateBaseUrl                : privateBaseURL,
+                                          privateBasePath               : "/api/",
+                                          publicStagingWildcardDomain   : publicStagingBaseURL,
+                                          publicProductionWildcardDomain: publicProductionBaseURL],
+                            toolbox: [openshiftProject: namespace,
+                                      destination     : targetInstance,
+                                      image           : "quay.io/redhat/3scale-toolbox",
+                                      insecure        : disableTlsValidation,
+                                      secretName      : secretName],
                             service: [:],
                             applications: [
-                                    [ name: "Widget Application", description: "The widget App", plan: "Widget Unlimited", account: developerAccountId ]
+                                    [name: "Widget Application", description: "The widget App", plan: "Widget Unlimited", account: developerAccountId]
                             ],
                             applicationPlans: [
-                                    [ systemName: "widget-unlimited", name: "Widget Unlimited", defaultPlan: true, published: true ],
+                                    [systemName: "widget-unlimited", name: "Widget Unlimited", defaultPlan: true, published: true],
                             ]
                     )
 
@@ -55,11 +64,11 @@ pipeline {
                 }
             }
         }
-        stage('First stage') {
+        stage('Provision config map') {
             steps {
                 script {
 
-                    widget 'Inside first stage'
+                    echo "environment" + service.getEnvironment()
                 }
             }
         }
