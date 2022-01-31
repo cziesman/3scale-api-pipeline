@@ -68,7 +68,7 @@ pipeline {
             steps {
                 script {
 
-                    echo "environment" + service.getEnvironment()
+                    echo "environment = " + service.getEnvironment().toString()
                 }
             }
         }
