@@ -68,7 +68,7 @@ pipeline {
             steps {
                 script {
 
-                    echo "environment = " + service.getEnvironment().toString()
+                    service.getEnvironment().properties.each { echo "$it.key -> $it.value" }
                 }
             }
         }
