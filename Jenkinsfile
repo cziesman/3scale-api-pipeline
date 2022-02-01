@@ -8,7 +8,7 @@ library identifier: '3scale-toolbox-jenkins@master',
 def service = null
 
 def targetSystemName = "widget-system"
-def targetInstance = "3scale-on-prem"
+def targetInstance = "3scale-toolbox"
 def privateBaseURL = "http://three-scale-api-3scale-api.apps.shared-na46.openshift.opentlc.com:80/api/"
 def testUserKey = "97daa2af299f93316d83331b99a96429"
 def developerAccountId = "admin"
