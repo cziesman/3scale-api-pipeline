@@ -7,16 +7,19 @@ library identifier: '3scale-toolbox-jenkins@master',
 
 def service = null
 
+def baseSystemName                = "widget"
 def accessToken = "23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba"
-def targetSystemName = "widget-system"
+def targetSystemName = "widget-api"
 def targetInstance = "https://${accessToken}@3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com/"
 def privateBaseURL = "http://three-scale-api-3scale-api.apps.shared-na46.openshift.opentlc.com"
+def privateBasePath = "/api/"
 def developerAccountId = "admin"
 def publicStagingBaseURL = "https://widget-api-3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com"
 def publicProductionBaseURL = "https://widget-api-3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com"
 def disableTlsValidation = true
 def secretName = "3scale-toolbox"
 def namespace = "jenkins"
+def imageName = "quay.io/redhat/3scale-toolbox"
 
 pipeline {
 
@@ -41,15 +44,15 @@ pipeline {
 
                     service = toolbox.prepareThreescaleService(
                             openapi: [filename: "widget-api/swagger.yaml"],
-                            environment: [baseSystemName                : "widget",
+                            environment: [baseSystemName                : baseSystemName,
                                           privateBaseUrl                : privateBaseURL,
-                                          privateBasePath               : "/api/",
-                                          targetSystemName              : "widget-api",
+                                          privateBasePath               : privateBasePath,
+                                          targetSystemName              : targetSystemName,
                                           publicStagingWildcardDomain   : publicStagingBaseURL,
                                           publicProductionWildcardDomain: publicProductionBaseURL],
                             toolbox: [openshiftProject: namespace,
                                       destination     : targetInstance,
-                                      image           : "quay.io/redhat/3scale-toolbox",
+                                      image           : imageName,
                                       insecure        : disableTlsValidation,
                                       secretName      : secretName],
                             service: [:],
@@ -96,15 +99,15 @@ pipeline {
             }
         }
 
-        stage("Import OpenAPI") {
-            steps {
-                script {
-
-                    service.importOpenAPI()
-                    echo "Service with system_name ${service.environment.targetSystemName} created !"
-                }
-            }
-        }
+//        stage("Import OpenAPI") {
+//            steps {
+//                script {
+//
+//                    service.importOpenAPI()
+//                    echo "Service with system_name ${service.environment.targetSystemName} created !"
+//                }
+//            }
+//        }
 
         stage("Create an Application Plan") {
             steps {
