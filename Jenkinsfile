@@ -54,10 +54,10 @@ pipeline {
                                       secretName      : secretName],
                             service: [:],
                             applications: [
-                                    [name: "Widget Application",
+                                    [name       : "Widget Application",
                                      description: "The widget App",
-                                     plan: "Widget Unlimited",
-                                     account: developerAccountId]
+                                     plan       : "Widget Unlimited",
+                                     account    : developerAccountId]
                             ],
                             applicationPlans: [
                                     [systemName     : "widget-unlimited",
@@ -79,7 +79,14 @@ pipeline {
             steps {
                 script {
 
-                    service.readProxy(service.getEnvironment()).properties.each { echo "$it.key -> $it.value" }
+                    proxy = service.readProxy(environment: [baseSystemName                : "widget",
+                                                            privateBaseUrl                : privateBaseURL,
+                                                            privateBasePath               : "/api/",
+                                                            targetSystemName              : "widget-api",
+                                                            publicStagingWildcardDomain   : publicStagingBaseURL,
+                                                            publicProductionWildcardDomain: publicProductionBaseURL])
+
+                    proxy.each { entry -> echo "$entry.key -> $entry.value" }
                 }
             }
         }
