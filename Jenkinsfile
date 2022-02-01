@@ -46,7 +46,7 @@ pipeline {
                             openapi: [filename: "widget-api/swagger.yaml"],
                             environment: [baseSystemName                : baseSystemName,
                                           privateBaseUrl                : privateBaseURL,
-                                          privateBasePath               : privateBasePath,
+                                          //privateBasePath               : privateBasePath,
                                           targetSystemName              : targetSystemName,
                                           publicStagingWildcardDomain   : publicStagingBaseURL,
                                           publicProductionWildcardDomain: publicProductionBaseURL],
