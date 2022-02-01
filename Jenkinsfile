@@ -57,7 +57,7 @@ pipeline {
                                       secretName      : secretName],
                             service: [:],
                             applications: [
-                                    [name       : "Widget Application",
+                                    [name       : "widget-app",
                                      description: "The widget App",
                                      plan       : "Widget Unlimited",
                                      account    : developerAccountId]
