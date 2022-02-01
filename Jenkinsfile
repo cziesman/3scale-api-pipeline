@@ -79,12 +79,7 @@ pipeline {
             steps {
                 script {
 
-                    proxy = service.readProxy(environment: [baseSystemName                : "widget",
-                                                            privateBaseUrl                : privateBaseURL,
-                                                            privateBasePath               : "/api/",
-                                                            targetSystemName              : "widget-api",
-                                                            publicStagingWildcardDomain   : publicStagingBaseURL,
-                                                            publicProductionWildcardDomain: publicProductionBaseURL])
+                    proxy = service.readProxy("staging")
 
                     proxy.each { entry -> echo "$entry.key -> $entry.value" }
                 }
