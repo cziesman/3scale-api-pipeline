@@ -7,10 +7,10 @@ library identifier: '3scale-toolbox-jenkins@master',
 
 def service = null
 
-def targetSystemName = "widget-system"
-def targetInstance = "https://3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com/"
-def privateBaseURL = "http://three-scale-api-3scale-api.apps.shared-na46.openshift.opentlc.com:80/api/"
 def testUserKey = "97daa2af299f93316d83331b99a96429"
+def targetSystemName = "widget-system"
+def targetInstance = "https://${testUserKey}@3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com/"
+def privateBaseURL = "http://three-scale-api-3scale-api.apps.shared-na46.openshift.opentlc.com:80/api/"
 def developerAccountId = "admin"
 def publicStagingBaseURL = "https://widget-api-3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com:443"
 def publicProductionBaseURL = "https://widget-api-3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com:443"
