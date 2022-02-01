@@ -78,16 +78,16 @@ pipeline {
             }
         }
 
-        stage('List properties') {
-            steps {
-                script {
-
-                    proxy = service.readProxy("sandbox")
-
-                    proxy.each { entry -> echo "$entry.key -> $entry.value" }
-                }
-            }
-        }
+//        stage('List properties') {
+//            steps {
+//                script {
+//
+//                    proxy = service.readProxy("sandbox")
+//
+//                    proxy.each { entry -> echo "$entry.key -> $entry.value" }
+//                }
+//            }
+//        }
 
 
         stage('Read service proxy config') {
@@ -99,15 +99,15 @@ pipeline {
             }
         }
 
-//        stage("Import OpenAPI") {
-//            steps {
-//                script {
-//
-//                    service.importOpenAPI()
-//                    echo "Service with system_name ${service.environment.targetSystemName} created !"
-//                }
-//            }
-//        }
+        stage("Import OpenAPI") {
+            steps {
+                script {
+
+                    service.importOpenAPI()
+                    echo "Service with system_name ${service.environment.targetSystemName} created !"
+                }
+            }
+        }
 
         stage("Create an Application Plan") {
             steps {
