@@ -16,7 +16,7 @@ def publicStagingBaseURL = "https://widget-api-3scale-apicast-staging.6dsvl.apps
 def publicProductionBaseURL = "https://widget-api-3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com:443"
 def disableTlsValidation = true
 def secretName = "3scale-toolbox"
-def namespace = "jenkins"
+def namespace = "threescale-6dsvl"
 
 pipeline {
 
