@@ -79,7 +79,7 @@ pipeline {
             steps {
                 script {
 
-                    proxy = service.readProxy("staging")
+                    proxy = service.readProxy("sandbox")
 
                     proxy.each { entry -> echo "$entry.key -> $entry.value" }
                 }
