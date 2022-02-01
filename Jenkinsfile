@@ -79,6 +79,16 @@ pipeline {
             steps {
                 script {
 
+                    service.readProxy(service.getEnvironment()).properties.each { echo "$it.key -> $it.value" }
+                }
+            }
+        }
+
+
+        stage('Read service proxy config') {
+            steps {
+                script {
+
                     service.getEnvironment().properties.each { echo "$it.key -> $it.value" }
                 }
             }
