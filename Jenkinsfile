@@ -68,8 +68,8 @@ pipeline {
                                      defaultPlan    : true,
                                      published      : true,
                                      costPerMonth   : 0.0,
-                                     setupFee       : 5.0,
-                                     trialPeriodDays: 30]
+                                     setupFee       : 0.0,
+                                     trialPeriodDays: 0]
                             ]
                     )
 
