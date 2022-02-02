@@ -83,10 +83,12 @@ pipeline {
                             sleep 1
                             pods = openshift.raw("get pods -o custom-columns=POD:.metadata.name --no-headers")
                             echo "pods = " + pods.out
-                            echo "pods.class = " + pods.getClass()
 
                             pod = pod(jobId, pods.out)
                             echo "pod = " + pod
+
+                            jobOutput = openshift.raw("logs ${pod}")
+                            echo "jobOutput = " + jobOutput
                         }
                     }
                 }
