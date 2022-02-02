@@ -32,7 +32,7 @@ String jobId(int length) {
         int randomLimitedInt = leftLimit + (int) (random.nextFloat() * (rightLimit - leftLimit + 1));
         buffer.append((char) randomLimitedInt);
     }
-    return buffer.toString();
+    return buffer.toString().toLowerCase();
 }
 
 pipeline {
