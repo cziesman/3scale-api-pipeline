@@ -51,7 +51,7 @@ pipeline {
 
                     openshift.withCluster () {
                         openshift.withProject("${namespace}") {
-                            commandLine = "3scale service list ${targetInstance}"
+                            commandLine = "3scale service list --insecure ${targetInstance}"
                             openshift.raw("create job 3scale-toolbox --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
                         }
                     }
