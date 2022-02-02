@@ -87,9 +87,16 @@ pipeline {
                             pod = pod(jobId, pods.out)
                             echo "pod = " + pod
 
-                            jobOutput = openshift.raw("wait --for=condition=Completed pod/${pod}")
-                            jobOutput = openshift.raw("logs ${pod}")
-                            echo "jobOutput = " + jobOutput
+                            timeout(20) {
+
+                                phase = openshift.raw("get pod ${pod} -o custom-columns=POD:.status.phase --no-headers").out
+                                if ("Succeeded".equals(phase.toString().trim())) {
+                                    jobOutput = openshift.raw("logs ${pod}")
+                                    echo "jobOutput = " + jobOutput
+                                } else {
+                                    sleep 1
+                                }
+                            }
                         }
                     }
                 }
