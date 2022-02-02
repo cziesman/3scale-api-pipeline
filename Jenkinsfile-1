@@ -91,12 +91,11 @@ pipeline {
 
                                 phase = openshift.raw("get pod ${pod} -o custom-columns=POD:.status.phase --no-headers").out.trim()
                                 echo "phase = " + phase
-                                if ("Succeeded".equals(phase)) {
-                                    jobOutput = openshift.raw("logs ${pod}")
-                                    echo "jobOutput = " + jobOutput
-                                } else {
+                                while (!"Succeeded".equals(phase)) {
                                     sleep 1
                                 }
+                                jobOutput = openshift.raw("logs ${pod}")
+                                echo "jobOutput = " + jobOutput
                             }
                         }
                     }
