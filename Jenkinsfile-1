@@ -25,16 +25,24 @@ def imageName = "quay.io/redhat/3scale-toolbox"
 String jobId(int length) {
 
     String source = "abcdefghijklmnopqrstuvwxyz0123456789";
-    int leftLimit = 0;
-    int rightLimit = 35;
     Random random = new Random();
 
     StringBuilder buffer = new StringBuilder(length);
     for (int i = 0; i < length; i++) {
-        int randomLimitedInt = leftLimit + (int) (random.nextFloat() * (rightLimit - leftLimit + 1));
+        int randomLimitedInt = random.nextInt(source.length() - 1);
         buffer.append(source[randomLimitedInt]);
     }
     return buffer.toString().toLowerCase();
+}
+
+String pod(String prefix, List pods) {
+
+    for (String item : pods) {
+        if (item.startsWith(prefix)) {
+            return item;
+        }
+    }
+    return null;
 }
 
 pipeline {
@@ -75,6 +83,9 @@ pipeline {
                             sleep 1
                             pods = openshift.raw("get pods -o custom-columns=POD:.metadata.name --no-headers")
                             echo "pods = " + pods.out
+
+                            pod = pod(jobId, pods)
+                            echo "pod = " + pod
                         }
                     }
                 }
