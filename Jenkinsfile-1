@@ -68,9 +68,10 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${namespace}") {
                             jobName = commandLine = "3scale service list --output=json --insecure ${targetInstance}"
-                            jobId = jobId(5)
+                            jobId = "3scale-toolbox-" + jobId(5)
+                            echo "jobId = " + jobId
 
-                            openshift.raw("create job 3scale-toolbox-${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
+                            openshift.raw("create job ${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
                             sleep 1
                             pods = openshift.raw("get pods -o custom-columns=POD:.metadata.name --no-headers")
                             echo "pods = " + pods.out
