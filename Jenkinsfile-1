@@ -1,25 +1,25 @@
 #!groovy
-library identifier: '3scale-toolbox-jenkins@master',
-        retriever: modernSCM(
-                [$class: 'GitSCMSource',
-                 remote: 'https://github.com/rh-integration/3scale-toolbox-jenkins.git',
-                 traits: [[$class: 'jenkins.plugins.git.traits.BranchDiscoveryTrait']]])
+//library identifier: '3scale-toolbox-jenkins@master',
+//        retriever: modernSCM(
+//                [$class: 'GitSCMSource',
+//                 remote: 'https://github.com/rh-integration/3scale-toolbox-jenkins.git',
+//                 traits: [[$class: 'jenkins.plugins.git.traits.BranchDiscoveryTrait']]])
 
 def service = null
 
-def baseSystemName = "widget"
-def accessToken = "23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba"
-def targetSystemName = "widget-api"
-def targetInstance = "https://${accessToken}@3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com"
-def privateBaseURL = "http://three-scale-api-3scale-api.apps.shared-na46.openshift.opentlc.com"
-def privateBasePath = "/api"
-def developerAccountId = "john"
-def publicStagingBaseURL = "3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com"
-def publicProductionBaseURL = "3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com"
-def disableTlsValidation = true
-def secretName = "3scale-toolbox"
-def namespace = "jenkins"
-def imageName = "quay.io/redhat/3scale-toolbox"
+//def baseSystemName = "widget"
+//def accessToken = "23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba"
+//def targetSystemName = "widget-api"
+//def targetInstance = "https://${accessToken}@3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com"
+//def privateBaseURL = "http://three-scale-api-3scale-api.apps.shared-na46.openshift.opentlc.com"
+//def privateBasePath = "/api"
+//def developerAccountId = "john"
+//def publicStagingBaseURL = "3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com"
+//def publicProductionBaseURL = "3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com"
+//def disableTlsValidation = true
+//def secretName = "3scale-toolbox"
+//def namespace = "jenkins"
+//def imageName = "quay.io/redhat/3scale-toolbox"
 
 
 String jobId(int length) {
@@ -32,21 +32,27 @@ String jobId(int length) {
         builder.append(source[random.nextInt(source.length() - 1)]);
     }
 
-    return builder.toString().toLowerCase();
+    return "3scale-toolbox-" + builder.toString().toLowerCase();
 }
 
-String pod(String prefix, String pods) {
+String waitForPod(String prefix) {
 
-    for (String item : pods.split("\n")) {
-        if (item.startsWith(prefix)) {
-            return item;
+    podName = ""
+    startsWith: while (!podName.startsWith(prefix)) {
+        sleep 1
+        pods = openshift.raw("get pods -o custom-columns=POD:.metadata.name --no-headers").out
+        for (String item : pods.split("\n")) {
+            if (item.startsWith(prefix)) {
+                podName = item;
+                break startsWith;
+            }
         }
     }
 
-    return null;
+    return podName
 }
 
-void waitForSuccess(String pod) {
+void waitForSuccessfulCompletion(String pod) {
 
     phase = ""
     while (!"Succeeded".equals(phase)) {
@@ -68,10 +74,16 @@ pipeline {
     }
 
     environment {
-        APP_BASE_NAME = "widget"
-        APP_API_NAME = "${APP_BASE_NAME}--api"
-        CICD_NAMESPACE = "jenkins"
+        // 3scale
+        ACCESS_TOKEN = "23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba"
+        THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com"
 
+        // application
+        APP_BASE_NAME = "widget"
+        APP_API_NAME = "${APP_BASE_NAME}-api"
+
+        // openshift/jenkins
+        CICD_NAMESPACE = "jenkins"
         OCP_TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
     }
     stages {
@@ -91,21 +103,17 @@ pipeline {
 
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
-                            jobName = commandLine = "3scale service list --output=json --insecure ${targetInstance}"
-                            jobId = "3scale-toolbox-" + jobId(5)
-                            echo "jobId = " + jobId
+                            commandLine = "3scale service list --output=json --insecure ${env.THREESCALE_SERVER}"
+                            jobId = jobId(5)
 
                             openshift.raw("create job ${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
-                            sleep 1
-                            pods = openshift.raw("get pods -o custom-columns=POD:.metadata.name --no-headers").out
-                            echo "pods = " + pods
-
-                            pod = pod(jobId, pods)
-                            echo "pod = " + pod
 
                             timeout(time: 20, unit: 'SECONDS') {
                                 node {
-                                    waitForSuccess(pod)
+                                    pod = waitForPod(jobId)
+                                    echo "pod = " + pod
+
+                                    waitForSuccessfulCompletion(pod)
 
                                     jobOutput = jobOutput(pod)
                                     echo "jobOutput = " + groovy.json.JsonOutput.prettyPrint(jobOutput)
