@@ -14,18 +14,19 @@
 //def namespace = "jenkins"
 //def imageName = "quay.io/redhat/3scale-toolbox"
 
+def strLength = 5
 
-String jobId(int length) {
+String jobId() {
 
     source = "abcdefghijklmnopqrstuvwxyz0123456789";
     random = new Random();
 
     builder = new StringBuilder(length);
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < strLength; i++) {
         builder.append(source[random.nextInt(source.length() - 1)]);
     }
 
-    return "3scale-toolbox-" + builder.toString().toLowerCase();
+    return "job-${env.APP_BASE_NAME}-" + builder.toString().toLowerCase();
 }
 
 String waitForPod(String prefix) {
@@ -55,6 +56,16 @@ void waitForSuccessfulCompletion(String pod) {
     }
 }
 
+String newJob(String commandLine) {
+
+    commandLine = "3scale service list --output=json --insecure ${env.THREESCALE_SERVER}"
+    jobId = jobId()
+
+    openshift.raw("create job ${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
+
+    return jobId
+}
+
 pipeline {
 
     agent {
@@ -63,28 +74,15 @@ pipeline {
 
     environment {
         // 3scale
-//        ACCESS_TOKEN = "23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba"
-//        THREESCALE_SERVER_BASE_URL = "3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com"
         THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
 
         // application
-//        APP_BASE_NAME = "widget"
         APP_API_NAME = "${APP_BASE_NAME}-api"
 
-        // openshift/jenkins
-//        CICD_NAMESPACE = "jenkins"
+        APP_OPEN_API_URL = "http://widget-app-widget.apps.shared-na46.openshift.opentlc.com/api-docs.yaml"
+
     }
     stages {
-
-        stage('First stage') {
-            steps {
-                script {
-
-                    echo 'Inside first stage'
-                    echo "FOO1 = ${env.FOO1}"
-                }
-            }
-        }
 
         stage('Get list of services') {
             steps {
@@ -93,9 +91,34 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
                             commandLine = "3scale service list --output=json --insecure ${env.THREESCALE_SERVER}"
-                            jobId = jobId(5)
+                            jobId = newJob(commandLine)
 
-                            openshift.raw("create job ${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
+                            timeout(time: 20, unit: 'SECONDS') {
+                                node {
+                                    pod = waitForPod(jobId)
+
+                                    waitForSuccessfulCompletion(pod)
+
+                                    jobOutput = openshift.raw("logs ${pod}").out
+                                    echo "jobOutput = " + groovy.json.JsonOutput.prettyPrint(jobOutput)
+                                }
+                            }
+
+                            openshift.raw("delete job ${jobId}")
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("Import OpenAPI spec") {
+            steps {
+                script {
+
+                    openshift.withCluster() {
+                        openshift.withProject("${env.CICD_NAMESPACE}") {
+                            commandLine = "3scale import openapi --target_system_name=${env.APP_API_NAME} --destination=${env.THREESCALE_SERVER} --insecure ${env.APP_OPEN_API_URL}"
+                            jobId = newJob(commandLine)
 
                             timeout(time: 20, unit: 'SECONDS') {
                                 node {
