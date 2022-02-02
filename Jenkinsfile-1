@@ -24,7 +24,7 @@ def imageName = "quay.io/redhat/3scale-toolbox"
 
 String jobId(int length) {
     int leftLimit = (int) '0';
-    int rightLimit = (int) 'Z'.;
+    int rightLimit = (int) 'Z';
     Random random = new Random();
 
     StringBuilder buffer = new StringBuilder(length);
