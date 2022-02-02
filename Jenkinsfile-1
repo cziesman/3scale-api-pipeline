@@ -81,10 +81,10 @@ pipeline {
 
                             openshift.raw("create job ${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
                             sleep 1
-                            pods = openshift.raw("get pods -o custom-columns=POD:.metadata.name --no-headers")
-                            echo "pods = " + pods.out
+                            pods = openshift.raw("get pods -o custom-columns=POD:.metadata.name --no-headers").out
+                            echo "pods = " + pods
 
-                            pod = pod(jobId, pods.out)
+                            pod = pod(jobId, pods)
                             echo "pod = " + pod
 
                             timeout(time: 20, unit: 'SECONDS') {
@@ -92,11 +92,11 @@ pipeline {
                                     phase = ""
                                     while (!"Succeeded".equals(phase)) {
                                         sleep 1
-                                        phase = openshift.raw("get pod ${pod} -o custom-columns=POD:.status.phase --no-headers").out.trim()
+                                        phase = openshift.raw("get pod ${pod} -o custom-columns=POD:.status.phase --no-headers").out
                                         echo "phase = " + phase
                                     }
-                                    jobOutput = openshift.raw("logs ${pod}")
-                                    echo "jobOutput = " + jobOutput
+                                    jobOutput = openshift.raw("logs ${pod}").out
+                                    echo "jobOutput = " + groovy.json.JsonOutput.prettyPrint(jobOutput)
                                 }
                             }
                         }
