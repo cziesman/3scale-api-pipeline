@@ -70,7 +70,7 @@ pipeline {
 
                             openshift.raw("create job 3scale-toolbox-${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
                             sleep 1
-                            openshift.raw("oc get pods -o json}")
+                            openshift.raw("get pods -o json}")
                         }
                     }
                 }
