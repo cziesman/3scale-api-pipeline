@@ -24,15 +24,15 @@ def imageName = "quay.io/redhat/3scale-toolbox"
 
 String jobId(int length) {
 
-    String source = "abcdefghijklmnopqrstuvwxyz0123456789";
-    Random random = new Random();
+    source = "abcdefghijklmnopqrstuvwxyz0123456789";
+    random = new Random();
 
-    StringBuilder buffer = new StringBuilder(length);
+    builder = new StringBuilder(length);
     for (int i = 0; i < length; i++) {
-        int randomLimitedInt = random.nextInt(source.length() - 1);
-        buffer.append(source[randomLimitedInt]);
+        builder.append(source[random.nextInt(source.length() - 1)]);
     }
-    return buffer.toString().toLowerCase();
+
+    return builder.toString().toLowerCase();
 }
 
 String pod(String prefix, String pods) {
@@ -42,7 +42,23 @@ String pod(String prefix, String pods) {
             return item;
         }
     }
+
     return null;
+}
+
+void waitForSuccess(String pod) {
+
+    phase = ""
+    while (!"Succeeded".equals(phase)) {
+        sleep 1
+        phase = openshift.raw("get pod ${pod} -o custom-columns=POD:.status.phase --no-headers").out.trim()
+        echo "phase = " + phase
+    }
+}
+
+String jobOutput(String pod) {
+
+    return openshift.raw("logs ${pod}").out
 }
 
 pipeline {
@@ -89,16 +105,14 @@ pipeline {
 
                             timeout(time: 20, unit: 'SECONDS') {
                                 node {
-                                    phase = ""
-                                    while (!"Succeeded".equals(phase)) {
-                                        sleep 1
-                                        phase = openshift.raw("get pod ${pod} -o custom-columns=POD:.status.phase --no-headers").out.trim()
-                                        echo "phase = " + phase
-                                    }
-                                    jobOutput = openshift.raw("logs ${pod}").out
+                                    waitForSuccess(pod)
+
+                                    jobOutput = jobOutput(pod)
                                     echo "jobOutput = " + groovy.json.JsonOutput.prettyPrint(jobOutput)
                                 }
                             }
+
+                            openshift.raw("delete job ${jobId}")
                         }
                     }
                 }
