@@ -63,16 +63,16 @@ pipeline {
 
     environment {
         // 3scale
-        ACCESS_TOKEN = "23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba"
-        THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com"
+//        ACCESS_TOKEN = "23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba"
+//        THREESCALE_SERVER_BASE_URL = "3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com"
+        THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
 
         // application
-        APP_BASE_NAME = "widget"
+//        APP_BASE_NAME = "widget"
         APP_API_NAME = "${APP_BASE_NAME}-api"
 
         // openshift/jenkins
-        CICD_NAMESPACE = "jenkins"
-        OCP_TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
+//        CICD_NAMESPACE = "jenkins"
     }
     stages {
 
