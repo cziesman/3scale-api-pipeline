@@ -21,10 +21,17 @@ def secretName = "3scale-toolbox"
 def namespace = "jenkins"
 def imageName = "quay.io/redhat/3scale-toolbox"
 
-def generator = { String alphabet, int n ->
-    new Random().with {
-        (1..n).collect { alphabet[ nextInt( alphabet.length() ) ] }.join()
-    }
+
+String jobId(int length) {
+    int leftLimit = '0';
+    int rightLimit = 'z';
+    Random random = new Random();
+
+    return generatedString = random.ints(leftLimit, rightLimit + 1)
+            .filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+            .limit(length)
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
 }
 
 pipeline {
@@ -55,11 +62,10 @@ pipeline {
             steps {
                 script {
 
-                    openshift.withCluster () {
+                    openshift.withCluster() {
                         openshift.withProject("${namespace}") {
-                            jobName =
-                            commandLine = "3scale service list --output=json --insecure ${targetInstance}"
-                            jobId = generator( (('0'..'9')+('a'..'z')).join(), 5 )
+                            jobName = commandLine = "3scale service list --output=json --insecure ${targetInstance}"
+                            jobId = jobId(5)
 
                             openshift.raw("create job 3scale-toolbox-${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
                             sleep 1000
