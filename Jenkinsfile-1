@@ -58,7 +58,6 @@ void waitForSuccessfulCompletion(String pod) {
 
 String newJob(String commandLine) {
 
-    commandLine = "3scale service list --output=json --insecure ${env.THREESCALE_SERVER}"
     jobId = jobId()
 
     openshift.raw("create job ${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
