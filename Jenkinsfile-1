@@ -1,11 +1,4 @@
 #!groovy
-//library identifier: '3scale-toolbox-jenkins@master',
-//        retriever: modernSCM(
-//                [$class: 'GitSCMSource',
-//                 remote: 'https://github.com/rh-integration/3scale-toolbox-jenkins.git',
-//                 traits: [[$class: 'jenkins.plugins.git.traits.BranchDiscoveryTrait']]])
-
-def service = null
 
 //def baseSystemName = "widget"
 //def accessToken = "23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba"
@@ -62,11 +55,6 @@ void waitForSuccessfulCompletion(String pod) {
     }
 }
 
-String jobOutput(String pod) {
-
-    return openshift.raw("logs ${pod}").out
-}
-
 pipeline {
 
     agent {
@@ -93,6 +81,7 @@ pipeline {
                 script {
 
                     echo 'Inside first stage'
+                    echo "FOO1 = ${env.FOO1}"
                 }
             }
         }
@@ -111,11 +100,10 @@ pipeline {
                             timeout(time: 20, unit: 'SECONDS') {
                                 node {
                                     pod = waitForPod(jobId)
-                                    echo "pod = " + pod
 
                                     waitForSuccessfulCompletion(pod)
 
-                                    jobOutput = jobOutput(pod)
+                                    jobOutput = openshift.raw("logs ${pod}").out
                                     echo "jobOutput = " + groovy.json.JsonOutput.prettyPrint(jobOutput)
                                 }
                             }
