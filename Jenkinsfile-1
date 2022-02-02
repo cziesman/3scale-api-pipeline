@@ -89,10 +89,11 @@ pipeline {
 
                             timeout(time: 20, unit: 'SECONDS') {
                                 node {
-                                    phase = openshift.raw("get pod ${pod} -o custom-columns=POD:.status.phase --no-headers").out.trim()
+                                    phase = ""
                                     while (!"Succeeded".equals(phase)) {
-                                        echo "phase = " + phase
                                         sleep 1
+                                        phase = openshift.raw("get pod ${pod} -o custom-columns=POD:.status.phase --no-headers").out.trim()
+                                        echo "phase = " + phase
                                     }
                                     jobOutput = openshift.raw("logs ${pod}")
                                     echo "jobOutput = " + jobOutput
