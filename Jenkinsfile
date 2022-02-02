@@ -14,8 +14,8 @@ def targetInstance = "https://${accessToken}@3scale-admin.6dsvl.apps.shared-na46
 def privateBaseURL = "http://three-scale-api-3scale-api.apps.shared-na46.openshift.opentlc.com"
 def privateBasePath = "/api"
 def developerAccountId = "john"
-def publicStagingBaseURL = "https://widget-api-3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com"
-def publicProductionBaseURL = "https://widget-api-3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com"
+def publicStagingBaseURL = "3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com"
+def publicProductionBaseURL = "3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com"
 def disableTlsValidation = true
 def secretName = "3scale-toolbox"
 def namespace = "jenkins"
@@ -46,7 +46,7 @@ pipeline {
                             openapi: [filename: "widget-api/swagger.yaml"],
                             environment: [baseSystemName                : baseSystemName,
                                           privateBaseUrl                : privateBaseURL,
-                                          //privateBasePath               : privateBasePath,
+                                          privateBasePath               : privateBasePath,
                                           targetSystemName              : targetSystemName,
                                           publicStagingWildcardDomain   : publicStagingBaseURL,
                                           publicProductionWildcardDomain: publicProductionBaseURL],

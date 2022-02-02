@@ -1,0 +1,62 @@
+#!groovy
+library identifier: '3scale-toolbox-jenkins@master',
+        retriever: modernSCM(
+                [$class: 'GitSCMSource',
+                 remote: 'https://github.com/rh-integration/3scale-toolbox-jenkins.git',
+                 traits: [[$class: 'jenkins.plugins.git.traits.BranchDiscoveryTrait']]])
+
+def service = null
+
+def baseSystemName = "widget"
+def accessToken = "23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba"
+def targetSystemName = "widget-api"
+def targetInstance = "https://${accessToken}@3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com"
+def privateBaseURL = "http://three-scale-api-3scale-api.apps.shared-na46.openshift.opentlc.com"
+def privateBasePath = "/api"
+def developerAccountId = "john"
+def publicStagingBaseURL = "3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com"
+def publicProductionBaseURL = "3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com"
+def disableTlsValidation = true
+def secretName = "3scale-toolbox"
+def namespace = "jenkins"
+def imageName = "quay.io/redhat/3scale-toolbox"
+
+pipeline {
+
+    agent {
+        label "master"
+    }
+
+    environment {
+        CONTEXT_NAME = "jenkins"
+        APP_NAME = "widget"
+        APP_NAMESPACE = "${CONTEXT_NAME}"
+        OCP_API_SERVER = "${OPENSHIFT_API_URL}"
+        OCP_TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
+    }
+    stages {
+
+        stage('First stage') {
+            steps {
+                script {
+
+                    echo 'Inside first stage'
+                }
+            }
+        }
+
+        stage('Read service proxy config') {
+            steps {
+                script {
+
+                    openshift.withCluster () {
+                        openshift.withProject("${namespace}") {
+                            commandLine = "3scale service list ${targetInstance}"
+                            openshift.raw("oc create job 3scale-toolbox --image=3scale-amp26/toolbox -- ${commandLine}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
