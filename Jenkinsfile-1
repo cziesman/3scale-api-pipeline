@@ -87,6 +87,7 @@ pipeline {
                             pod = pod(jobId, pods.out)
                             echo "pod = " + pod
 
+                            jobOutput = openshift.raw("wait --for=condition=Complete pod/${pod}")
                             jobOutput = openshift.raw("logs ${pod}")
                             echo "jobOutput = " + jobOutput
                         }
