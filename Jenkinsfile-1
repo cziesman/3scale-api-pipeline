@@ -72,8 +72,8 @@ pipeline {
 
                             openshift.raw("create job 3scale-toolbox-${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
                             sleep 1
-                            pods = openshift.raw("get pods -o custom-columns=POD:.metadata.name --no-headers}")
-                            echo "pods = " + pods
+                            pods = openshift.raw("get pods -o custom-columns=POD:.metadata.name --no-headers")
+                            echo "pods = " + pods.out
                         }
                     }
                 }
