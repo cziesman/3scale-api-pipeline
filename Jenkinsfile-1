@@ -68,10 +68,10 @@ pipeline {
     }
 
     environment {
-        CONTEXT_NAME = "jenkins"
-        APP_NAME = "widget"
-        APP_NAMESPACE = "${CONTEXT_NAME}"
-        OCP_API_SERVER = "${OPENSHIFT_API_URL}"
+        APP_BASE_NAME = "widget"
+        APP_API_NAME = "${APP_BASE_NAME}--api"
+        CICD_NAMESPACE = "jenkins"
+
         OCP_TOKEN = readFile('/var/run/secrets/kubernetes.io/serviceaccount/token').trim()
     }
     stages {
@@ -90,7 +90,7 @@ pipeline {
                 script {
 
                     openshift.withCluster() {
-                        openshift.withProject("${namespace}") {
+                        openshift.withProject("${env.CICD_NAMESPACE}") {
                             jobName = commandLine = "3scale service list --output=json --insecure ${targetInstance}"
                             jobId = "3scale-toolbox-" + jobId(5)
                             echo "jobId = " + jobId
