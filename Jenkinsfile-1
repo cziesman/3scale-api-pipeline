@@ -21,6 +21,12 @@ def secretName = "3scale-toolbox"
 def namespace = "jenkins"
 def imageName = "quay.io/redhat/3scale-toolbox"
 
+def generator = { String alphabet, int n ->
+    new Random().with {
+        (1..n).collect { alphabet[ nextInt( alphabet.length() ) ] }.join()
+    }
+}
+
 pipeline {
 
     agent {
@@ -51,8 +57,13 @@ pipeline {
 
                     openshift.withCluster () {
                         openshift.withProject("${namespace}") {
+                            jobName =
                             commandLine = "3scale service list --output=json --insecure ${targetInstance}"
-                            openshift.raw("create job 3scale-toolbox --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
+                            jobId = generator( (('0'..'9')+('a'..'z')).join(), 5 )
+
+                            openshift.raw("create job 3scale-toolbox-${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
+                            sleep 1000
+                            openshift.raw("oc get pods -o json}")
                         }
                     }
                 }
