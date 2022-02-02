@@ -45,13 +45,13 @@ pipeline {
             }
         }
 
-        stage('Read service proxy config') {
+        stage('Get list of services') {
             steps {
                 script {
 
                     openshift.withCluster () {
                         openshift.withProject("${namespace}") {
-                            commandLine = "3scale service list --insecure ${targetInstance}"
+                            commandLine = "3scale service list --output=json --insecure ${targetInstance}"
                             openshift.raw("create job 3scale-toolbox --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
                         }
                     }
