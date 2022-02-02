@@ -85,32 +85,32 @@ pipeline {
     }
     stages {
 
-        stage('Get list of services') {
-            steps {
-                script {
-
-                    openshift.withCluster() {
-                        openshift.withProject("${env.CICD_NAMESPACE}") {
-                            commandLine = "3scale service list --output=json --insecure ${env.THREESCALE_SERVER}"
-                            jobId = newJob(commandLine)
-
-                            timeout(time: 20, unit: 'SECONDS') {
-                                node {
-                                    pod = waitForPod(jobId)
-
-                                    waitForSuccessfulCompletion(pod)
-
-                                    jobOutput = openshift.raw("logs ${pod}").out
-                                    echo "jobOutput = " + groovy.json.JsonOutput.prettyPrint(jobOutput)
-                                }
-                            }
-
-                            openshift.raw("delete job ${jobId}")
-                        }
-                    }
-                }
-            }
-        }
+//        stage('Get list of services') {
+//            steps {
+//                script {
+//
+//                    openshift.withCluster() {
+//                        openshift.withProject("${env.CICD_NAMESPACE}") {
+//                            commandLine = "3scale service list --output=json --insecure ${env.THREESCALE_SERVER}"
+//                            jobId = newJob(commandLine)
+//
+//                            timeout(time: 20, unit: 'SECONDS') {
+//                                node {
+//                                    pod = waitForPod(jobId)
+//
+//                                    waitForSuccessfulCompletion(pod)
+//
+//                                    jobOutput = openshift.raw("logs ${pod}").out
+//                                    echo "jobOutput = " + groovy.json.JsonOutput.prettyPrint(jobOutput)
+//                                }
+//                            }
+//
+//                            openshift.raw("delete job ${jobId}")
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         stage("Import OpenAPI spec") {
             steps {
