@@ -132,7 +132,7 @@ pipeline {
                                 }
                             }
 
-                            openshift.raw("delete job ${jobId}")
+//                            openshift.raw("delete job ${jobId}")
                         }
                     }
                 }
