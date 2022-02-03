@@ -110,6 +110,7 @@ pipeline {
                             List applicationList =  applications.applications
                             applicationList.each { item ->
                                 echo "application = ${item}"
+                                echo "application.name = ${item.name}"
                             }
                             env.APPLICATIONS = applications
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
@@ -128,6 +129,7 @@ pipeline {
                             List applicationPlanList =  applicationPlans.plans
                             applicationPlanList.each { item ->
                                 echo "applicationPlan = ${item}"
+                                echo "applicationPlan.name = ${item.name}"
                             }
 
                             env.APPLICATION_PLANS = applicationPlans
