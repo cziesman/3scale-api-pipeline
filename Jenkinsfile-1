@@ -211,7 +211,7 @@ pipeline {
                             plans.each { plan ->
 
                                 params = ""
-                                if (Boolean.true.equals(plan.approvalRequired)) {
+                                if (Boolean.TRUE.equals(plan.approvalRequired)) {
                                     params += " --approval-required=true"
                                 } else {
                                     params += " --approval-required=false"
@@ -219,22 +219,22 @@ pipeline {
                                 if (plan.costPerMonth != null) {
                                     params += " --cost-per-month=${plan.costPerMonth}"
                                 }
-                                if (Boolean.true.equals(plan.defaultPlan)) {
+                                if (Boolean.TRUE.equals(plan.defaultPlan)) {
                                     params += " --default"
                                 }
-                                if (Boolean.true.equals(plan.disabled)) {
+                                if (Boolean.TRUE.equals(plan.disabled)) {
                                     params += " --disabled"
                                 }
-                                if (Boolean.true.equals(plan.enabled)) {
+                                if (Boolean.TRUE.equals(plan.enabled)) {
                                     params += " --enabled"
                                 }
-                                if (Boolean.true.equals(plan.hide)) {
+                                if (Boolean.TRUE.equals(plan.hide)) {
                                     params += " --hide"
                                 }
                                 if (plan.name != null) {
                                     params += " --name=${plan.name}"
                                 }
-                                if (Boolean.true.equals(plan.publish)) {
+                                if (Boolean.TRUE.equals(plan.publish)) {
                                     params += " --publish"
                                 }
                                 if (plan.setupFee != null) {
