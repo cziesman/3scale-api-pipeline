@@ -4,7 +4,7 @@
 //def publicStagingBaseURL = "3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com"
 //def publicProductionBaseURL = "3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com"
 
-def imageName = "quay.io/redhat/3scale-toolbox"
+imageName = "quay.io/redhat/3scale-toolbox"
 
 String jobId() {
 
