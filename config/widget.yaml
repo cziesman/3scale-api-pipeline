@@ -8,13 +8,13 @@ data:
   APP_BASE_NAME: widget
   APP_SERVICE_NAME: Widget API
   THREESCALE_SERVER_BASE_URL: 3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com
-  application.yaml: |
+  application_yaml: |
     applications:
       - name: "widget-app"
         description: 'The widget App'
         plan: "widget-unlimited"
         account: 'john'
-  applicationPlan.yaml: |
+  applicationPlan_yaml: |
     plans:
       - systemName     : 'widget-unlimited'
         name           : 'Widget Unlimited'

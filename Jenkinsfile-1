@@ -108,11 +108,11 @@ pipeline {
                             env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
                             echo "env.APP_SYSTEM_NAME = ${env.APP_SYSTEM_NAME}"
 
-                            applications = configMap.data.application.yaml
+                            applications = configMap.data.application_yaml
                             env.APPLICATIONS = applications.get("applications")
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
 
-                            plans = configMap.data.applicationPlan.yaml
+                            plans = configMap.data.applicationPlan_yaml
                             env.APPLICATION_PLANS = plans.get("plans")
                             echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
                         }
