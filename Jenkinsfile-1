@@ -93,12 +93,22 @@ pipeline {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
                             json = openshift.raw("get configmap ${env.CONFIG_MAP} -o json").out
+                            echo "json = ${json}"
                             configMap = readJSON(text: json)
                             env.DATA = configMap.get("data")
                             echo "env.DATA = ${env.DATA}"
 
-                            namespace = configMap.get("metadata").get("namespace")
-                            echo "namespace = ${namespace}"
+                            json = configMap.get("data").get("application.yaml")
+                            echo "json = ${json}"
+                            configMap = readJSON(text: json)
+                            env.APPLICATIONS = configMap.get("applications")
+                            echo "env.APPLICATIONS = ${env.APPLICATIONS}"
+
+                            json = configMap.get("data").get("applicationPlan.yaml")
+                            echo "json = ${json}"
+                            configMap = readJSON(text: json)
+                            env.APPLICATION_PLANS = configMap.get("plans")
+                            echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
                         }
                     }
                 }
