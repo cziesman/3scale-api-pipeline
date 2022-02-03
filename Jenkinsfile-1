@@ -245,6 +245,7 @@ pipeline {
                                 }
 
                                 commandLine = "3scale application-plan apply --insecure ${params} ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${plan.systemName}"
+                                echo "commandLine = ${commandLine}"
                                 jobId = newJob(commandLine)
 
                                 timeout(time: 20, unit: 'SECONDS') {
