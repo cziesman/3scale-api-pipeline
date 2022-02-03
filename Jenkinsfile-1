@@ -87,6 +87,7 @@ pipeline {
                             configMap = readYaml(text: yaml)
                             data = configMap.get("data")
                             echo "data = ${data}"
+                            echo "data class = ${data.class}"
                             env.DATA = readYaml(text: data)
                             echo "env.DATA = ${env.DATA}"
 
