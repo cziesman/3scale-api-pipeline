@@ -284,7 +284,10 @@ pipeline {
                                 echo "application = ${application}"
                                 echo "application.class = " + application.getClass()
 
+                                application.each { entry ->
 
+                                    echo "${entry.key} :: ${entry.value}"
+                                }
                             }
                         }
                     }
