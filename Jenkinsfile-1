@@ -108,14 +108,15 @@ pipeline {
                             env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
                             echo "env.APP_SYSTEM_NAME = ${env.APP_SYSTEM_NAME}"
 
-                            application_yaml = configMap.data.application_yaml;
+                            application_yaml = configMap.data.application_yaml
                             echo "application_yaml = ${application_yaml}"
                             echo "application_yaml.class = " + application_yaml.class
 
-                            env.APPLICATIONS = configMap.data.application_yaml.applications
+                            env.APPLICATIONS = readYaml(text: application_yaml)
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
 
-                            env.APPLICATION_PLANS = configMap.data.applicationPlan_yaml.plans
+                            applicationPlan_yaml = configMap.data.application_yaml
+                            env.APPLICATION_PLANS = readYaml(text: applicationPlan_yaml)
                             echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
                         }
                     }
