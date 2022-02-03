@@ -6,6 +6,17 @@
 
 imageName = "quay.io/redhat/3scale-toolbox"
 
+String systemName(String name) {
+
+    String PUNCTUATION = "\\p{Punct}+";
+    String WHITESPACE = "\\s+";
+
+    return name
+            .replaceAll(PUNCTUATION, "")
+            .replaceAll(WHITESPACE, "-")
+            .toLowerCase()
+}
+
 String jobId() {
 
     strLength = 5
@@ -56,6 +67,12 @@ String newJob(String commandLine) {
     return jobId
 }
 
+Map parseJsonToMap(String json) {
+
+    slurper = new groovy.json.JsonSlurper()
+    return new HashMap<>(slurper.parseText(json))
+}
+
 pipeline {
 
     agent {
@@ -73,6 +90,21 @@ pipeline {
 
     }
     stages {
+
+        stage("Read the config map") {
+            steps {
+                script {
+
+                    openshift.withCluster() {
+                        openshift.withProject("${env.CICD_NAMESPACE}") {
+
+                            configMap = openshift.raw("get configmap ${env.CONFIG_MAP} -o json").out
+                            echo "configMap = ${configMap}"
+                        }
+                    }
+                }
+            }
+        }
 
 //        stage("Import OpenAPI spec") {
 //            steps {
@@ -156,32 +188,32 @@ pipeline {
 //            }
 //        }
 
-        stage("Create an Application Plan") {
-            steps {
-                script {
-
-                    openshift.withCluster() {
-                        openshift.withProject("${env.CICD_NAMESPACE}") {
-                            commandLine = "3scale application-plan apply --insecure --default --name='${env.APP_PLAN_NAME}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${env.APP_PLAN_SYSTEM_NAME}"
-                            jobId = newJob(commandLine)
-
-                            timeout(time: 20, unit: 'SECONDS') {
-                                node {
-                                    pod = waitForPod(jobId)
-
-                                    waitForSuccessfulCompletion(pod)
-
-                                    jobOutput = openshift.raw("logs ${pod}").out
-                                    echo "jobOutput = " + groovy.json.JsonOutput.prettyPrint(jobOutput)
-                                }
-                            }
-
-                            openshift.raw("delete job ${jobId}")
-                        }
-                    }
-                }
-            }
-        }
+//        stage("Create an Application Plan") {
+//            steps {
+//                script {
+//
+//                    openshift.withCluster() {
+//                        openshift.withProject("${env.CICD_NAMESPACE}") {
+//                            commandLine = "3scale application-plan apply --insecure --default --name='${env.APP_PLAN_NAME}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${env.APP_PLAN_SYSTEM_NAME}"
+//                            jobId = newJob(commandLine)
+//
+//                            timeout(time: 20, unit: 'SECONDS') {
+//                                node {
+//                                    pod = waitForPod(jobId)
+//
+//                                    waitForSuccessfulCompletion(pod)
+//
+//                                    jobOutput = openshift.raw("logs ${pod}").out
+//                                    echo "jobOutput = ${jobOutput}"
+//                                }
+//                            }
+//
+//                            openshift.raw("delete job ${jobId}")
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
     }
 }
