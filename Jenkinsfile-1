@@ -117,32 +117,32 @@ pipeline {
             }
         }
 
-//        stage("Import OpenAPI spec") {
-//            steps {
-//                script {
-//
-//                    openshift.withCluster() {
-//                        openshift.withProject("${env.CICD_NAMESPACE}") {
-//                            commandLine = "3scale import openapi --insecure --target_system_name=${env.APP_BACKEND_ID} --destination=${env.THREESCALE_SERVER} --backend ${env.APP_OPEN_API_URL}"
-//                            jobId = newJob(commandLine)
-//
-//                            timeout(time: 20, unit: 'SECONDS') {
-//                                node {
-//                                    pod = waitForPod(jobId)
-//
-//                                    waitForSuccessfulCompletion(pod)
-//
-//                                    jobOutput = openshift.raw("logs ${pod}").out
-//                                    echo "jobOutput = " + groovy.json.JsonOutput.prettyPrint(jobOutput)
-//                                }
-//                            }
-//
-//                            openshift.raw("delete job ${jobId}")
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        stage("Import OpenAPI spec") {
+            steps {
+                script {
+
+                    openshift.withCluster() {
+                        openshift.withProject("${env.CICD_NAMESPACE}") {
+                            commandLine = "3scale import openapi --insecure --target_system_name=${env.APP_BACKEND_ID} --destination=${env.THREESCALE_SERVER} --backend ${env.APP_OPEN_API_URL}"
+                            jobId = newJob(commandLine)
+
+                            timeout(time: 20, unit: 'SECONDS') {
+                                node {
+                                    pod = waitForPod(jobId)
+
+                                    waitForSuccessfulCompletion(pod)
+
+                                    jobOutput = openshift.raw("logs ${pod}").out
+                                    echo "jobOutput = " + groovy.json.JsonOutput.prettyPrint(jobOutput)
+                                }
+                            }
+
+                            openshift.raw("delete job ${jobId}")
+                        }
+                    }
+                }
+            }
+        }
 
         stage("Create a Service") {
             steps {
@@ -200,7 +200,7 @@ pipeline {
 //            }
 //        }
 
-        stage("Create an Application Plan") {
+        stage("Create Application Plans") {
             steps {
                 script {
 
@@ -261,6 +261,29 @@ pipeline {
                                 }
 
                                 openshift.raw("delete job ${jobId}")
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        stage("Create Applications") {
+            steps {
+                script {
+
+                    openshift.withCluster() {
+                        openshift.withProject("${env.CICD_NAMESPACE}") {
+
+                            List applications = APPLICATIONS
+
+                            applications.each { application ->
+
+                                echo "application = ${application}"
+                                echo "application.class = " + application.getClass()
+
 
                             }
                         }
