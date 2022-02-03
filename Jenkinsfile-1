@@ -85,16 +85,17 @@ pipeline {
 
                             yaml = openshift.raw("get configmap ${env.CONFIG_MAP} -o yaml").out
                             configMap = readYaml(text: yaml)
-                            data = configMap.get("data")
-                            echo "data = ${data}"
-                            echo "data class = " + data.getClass()
-                            env.DATA = readYaml(text: data)
+                            env.DATA = configMap.get("data")
                             echo "env.DATA = ${env.DATA}"
 
                             env.ACCESS_TOKEN = env.DATA.get('ACCESS_TOKEN')
+                            echo "env.ACCESS_TOKEN = ${env.ACCESS_TOKEN}"
                             env.APP_BASE_NAME = env.DATA.get('APP_BASE_NAME')
+                            echo "env.APP_BASE_NAME = ${env.APP_BASE_NAME}"
                             env.APP_SERVICE_NAME = env.DATA.get('APP_SERVICE_NAME')
+                            echo "env.APP_SERVICE_NAME = ${env.APP_SERVICE_NAME}"
                             env.THREESCALE_SERVER_BASE_URL = env.DATA.get('THREESCALE_SERVER_BASE_URL')
+                            echo "env.THREESCALE_SERVER_BASE_URL = ${env.THREESCALE_SERVER_BASE_URL}"
 
                             // 3scale
                             env.THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
