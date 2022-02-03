@@ -69,7 +69,7 @@ pipeline {
         // application
         APP_API_NAME = "${APP_BASE_NAME}-api"
         APP_BACKEND_ID = "${APP_BASE_NAME}-backend"
-        APP_SYSTEM_NAME = "${APP_BASE_NAME}-system"
+        APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
 
     }
     stages {
