@@ -85,17 +85,15 @@ pipeline {
 
                             yaml = openshift.raw("get configmap ${env.CONFIG_MAP} -o yaml").out
                             configMap = readYaml(text: yaml)
-                            env.DATA = readYaml(text: configMap["data"])
-                            echo "env.DATA = ${env.DATA}"
-                            echo "env.DATA.class = " + env.DATA.getClass()
+                            echo "configMap.data = ${configMap.data}"
 
-                            env.ACCESS_TOKEN = env.DATA['ACCESS_TOKEN']
+                            env.ACCESS_TOKEN = configMap.data.ACCESS_TOKEN
                             echo "env.ACCESS_TOKEN = ${env.ACCESS_TOKEN}"
-                            env.APP_BASE_NAME = env.DATA['APP_BASE_NAME']
+                            env.APP_BASE_NAME = configMap.data.APP_BASE_NAME
                             echo "env.APP_BASE_NAME = ${env.APP_BASE_NAME}"
-                            env.APP_SERVICE_NAME = env.DATA['APP_SERVICE_NAME']
+                            env.APP_SERVICE_NAME = configMap.data.APP_SERVICE_NAME
                             echo "env.APP_SERVICE_NAME = ${env.APP_SERVICE_NAME}"
-                            env.THREESCALE_SERVER_BASE_URL = env.DATA['THREESCALE_SERVER_BASE_URL']
+                            env.THREESCALE_SERVER_BASE_URL = configMap.data.THREESCALE_SERVER_BASE_URL
                             echo "env.THREESCALE_SERVER_BASE_URL = ${env.THREESCALE_SERVER_BASE_URL}"
 
                             // 3scale
@@ -110,11 +108,11 @@ pipeline {
                             env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
                             echo "env.APP_SYSTEM_NAME = ${env.APP_SYSTEM_NAME}"
 
-                            applications = env.DATA["application.yaml"]
+                            applications = configMap.data.application.yaml
                             env.APPLICATIONS = applications.get("applications")
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
 
-                            plans = env.DATA["applicationPlan.yaml"]
+                            plans = configMap.data.applicationPlan.yaml
                             env.APPLICATION_PLANS = plans.get("plans")
                             echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
                         }
