@@ -20,13 +20,13 @@ data:
     - systemName     : 'widget-unlimited'
       name           : 'Widget Unlimited'
       defaultPlan    : true
-      published      : true
+      publish        : true
       costPerMonth   : 0.0
       setupFee       : 0.0
       trialPeriodDays: 0
     - systemName     : 'widget-limited'
       name           : 'Widget Limited'
-      published      : true
+      publish        : true
       costPerMonth   : 0.0
       setupFee       : 0.0
       trialPeriodDays: 0

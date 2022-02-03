@@ -1,6 +1,5 @@
 #!groovy
 
-//def developerAccountId = "john"
 //def publicStagingBaseURL = "3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com"
 //def publicProductionBaseURL = "3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com"
 
@@ -76,7 +75,7 @@ pipeline {
 
     stages {
 
-        stage("Initialize environment JSON") {
+        stage("Initialize environment") {
             steps {
                 script {
 
@@ -86,107 +85,34 @@ pipeline {
                             json = openshift.raw("get configmap ${env.CONFIG_MAP} -o json").out
                             configMap = readJSON(text: json)
 
+                            // globals
                             env.ACCESS_TOKEN = configMap.data.ACCESS_TOKEN
                             env.APP_BASE_NAME = configMap.data.APP_BASE_NAME
                             env.APP_OPEN_API_URL = configMap.data.APP_OPEN_API_URL
                             env.APP_SERVICE_NAME = configMap.data.APP_SERVICE_NAME
                             env.THREESCALE_SERVER_BASE_URL = configMap.data.THREESCALE_SERVER_BASE_URL
 
-                            // 3scale
-                            env.THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
-
-                            env.APP_API_NAME = "${APP_BASE_NAME}-api"
-                            env.APP_BACKEND_ID = "${APP_BASE_NAME}-backend"
-                            env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
-
-
-
-
                             // applications
                             application_yaml = configMap.data.application_yaml
-                            echo "application_yaml = \n${application_yaml}"
                             applications = readYaml(text: application_yaml)
-                            echo "applications.class = " + applications.getClass()
-                            List applicationList =  applications.applications
-                            applicationList.each { item ->
-                                echo "application = ${item}"
-                                echo "application.name = ${item.name}"
-                            }
-                            env.APPLICATIONS = applications
-                            echo "env.APPLICATIONS = ${env.APPLICATIONS}"
-
-
-
-
-
-
+                            env.APPLICATIONS = applications.applications
 
                             // application plans
                             applicationPlan_yaml = configMap.data.applicationPlan_yaml
-                            echo "applicationPlan_yaml = \n${applicationPlan_yaml}"
                             applicationPlans = readYaml(text: applicationPlan_yaml)
-                            echo "applicationPlans.class = " + applicationPlans.getClass()
-                            List applicationPlanList =  applicationPlans.plans
-                            applicationPlanList.each { item ->
-                                echo "applicationPlan = ${item}"
-                                echo "applicationPlan.name = ${item.name}"
-                            }
+                            env.APPLICATION_PLANS = applicationPlans.plans
 
-                            env.APPLICATION_PLANS = applicationPlans
-                            echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
+                            // 3scale
+                            env.THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
+                            env.APP_API_NAME = "${APP_BASE_NAME}-api"
+                            env.APP_BACKEND_ID = "${APP_BASE_NAME}-backend"
+                            env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
 
                         }
                     }
                 }
             }
         }
-
-//        stage("Initialize environment") {
-//            steps {
-//                script {
-//
-//                    openshift.withCluster() {
-//                        openshift.withProject("${env.CICD_NAMESPACE}") {
-//
-//                            yaml = openshift.raw("get configmap ${env.CONFIG_MAP} -o yaml").out
-//                            configMap = readYaml(text: yaml)
-//
-//                            env.ACCESS_TOKEN = configMap.data.ACCESS_TOKEN
-//                            env.APP_BASE_NAME = configMap.data.APP_BASE_NAME
-//                            env.APP_OPEN_API_URL = configMap.data.APP_OPEN_API_URL
-//                            env.APP_SERVICE_NAME = configMap.data.APP_SERVICE_NAME
-//                            env.THREESCALE_SERVER_BASE_URL = configMap.data.THREESCALE_SERVER_BASE_URL
-//
-//                            // 3scale
-//                            env.THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
-//
-//                            // application
-//                            env.APP_API_NAME = "${APP_BASE_NAME}-api"
-//                            env.APP_BACKEND_ID = "${APP_BASE_NAME}-backend"
-//                            env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
-//
-//                            application_yaml = configMap.data.application_yaml
-//                            echo "application_yaml = \n${application_yaml}"
-//                            applications = readYaml(text: application_yaml)
-//                            echo "applications = ${applications}"
-//                            env.APPLICATIONS = applications.applications
-//                            echo "env.APPLICATIONS = ${env.APPLICATIONS}"
-//
-//                            applicationPlan_yaml = configMap.data.applicationPlan_yaml
-//                            echo "applicationPlan_yaml = \n${applicationPlan_yaml}"
-//                            applicationPlans = readYaml(text: applicationPlan_yaml)
-//                            echo "applicationPlans = ${applicationPlans}"
-//                            env.APPLICATION_PLANS = applicationPlans.plans
-//                            echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
-//
-//                            env.APPLICATION_PLANS.each { entry ->
-//                                echo "entry = ${entry}"
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
 //        stage("Import OpenAPI spec") {
 //            steps {
@@ -270,32 +196,73 @@ pipeline {
 //            }
 //        }
 
-//        stage("Create an Application Plan") {
-//            steps {
-//                script {
-//
-//                    openshift.withCluster() {
-//                        openshift.withProject("${env.CICD_NAMESPACE}") {
-//                            commandLine = "3scale application-plan apply --insecure --default --name='${env.APP_PLAN_NAME}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${env.APP_PLAN_SYSTEM_NAME}"
-//                            jobId = newJob(commandLine)
-//
-//                            timeout(time: 20, unit: 'SECONDS') {
-//                                node {
-//                                    pod = waitForPod(jobId)
-//
-//                                    waitForSuccessfulCompletion(pod)
-//
-//                                    jobOutput = openshift.raw("logs ${pod}").out
-//                                    echo "jobOutput = ${jobOutput}"
-//                                }
-//                            }
-//
-//                            openshift.raw("delete job ${jobId}")
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        stage("Create an Application Plan") {
+            steps {
+                script {
+
+                    openshift.withCluster() {
+                        openshift.withProject("${env.CICD_NAMESPACE}") {
+
+                            List plans = env.APPLICATION_PLANS
+
+                            plans.each { plan ->
+
+                                params = ""
+                                if (Boolean.true.equals(plan.approvalRequired)) {
+                                    params += " --approval-required=true"
+                                } else {
+                                    params += " --approval-required=false"
+                                }
+                                if (plan.costPerMonth != null) {
+                                    params += " --cost-per-month=${plan.costPerMonth}"
+                                }
+                                if (Boolean.true.equals(plan.defaultPlan)) {
+                                    params += " --default"
+                                }
+                                if (Boolean.true.equals(plan.disabled)) {
+                                    params += " --disabled"
+                                }
+                                if (Boolean.true.equals(plan.enabled)) {
+                                    params += " --enabled"
+                                }
+                                if (Boolean.true.equals(plan.hide)) {
+                                    params += " --hide"
+                                }
+                                if (plan.name != null) {
+                                    params += " --name=${plan.name}"
+                                }
+                                if (Boolean.true.equals(plan.publish)) {
+                                    params += " --publish"
+                                }
+                                if (plan.setupFee != null) {
+                                    params += " --setup-fee=${plan.setupFee}"
+                                }
+                                if (plan.trialPeriodDays != null) {
+                                    params += " --trial-period-days=${plan.trialPeriodDays}"
+                                }
+
+                                commandLine = "3scale application-plan apply --insecure ${params}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${plan.systemName}"
+                                jobId = newJob(commandLine)
+
+                                timeout(time: 20, unit: 'SECONDS') {
+                                    node {
+                                        pod = waitForPod(jobId)
+
+                                        waitForSuccessfulCompletion(pod)
+
+                                        jobOutput = openshift.raw("logs ${pod}").out
+                                        echo "jobOutput = ${jobOutput}"
+                                    }
+                                }
+
+                                openshift.raw("delete job ${jobId}")
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     }
 }
