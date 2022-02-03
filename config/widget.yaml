@@ -11,22 +11,22 @@ data:
   THREESCALE_SERVER_BASE_URL: 3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com
   application_yaml: |
     applications:
-      - name: "widget-app"
-        description: 'The widget App'
-        plan: "widget-unlimited"
-        account: 'john'
+    - name: "widget-app"
+      description: 'The widget App'
+      plan: "widget-unlimited"
+      account: 'john'
   applicationPlan_yaml: |
     plans:
-      - systemName     : 'widget-unlimited'
-        name           : 'Widget Unlimited'
-        defaultPlan    : true
-        published      : true
-        costPerMonth   : 0.0
-        setupFee       : 0.0
-        trialPeriodDays: 0
-      - systemName     : 'widget-limited'
-        name           : 'Widget Limited'
-        published      : true
-        costPerMonth   : 0.0
-        setupFee       : 0.0
-        trialPeriodDays: 0
+    - systemName     : 'widget-unlimited'
+      name           : 'Widget Unlimited'
+      defaultPlan    : true
+      published      : true
+      costPerMonth   : 0.0
+      setupFee       : 0.0
+      trialPeriodDays: 0
+    - systemName     : 'widget-limited'
+      name           : 'Widget Limited'
+      published      : true
+      costPerMonth   : 0.0
+      setupFee       : 0.0
+      trialPeriodDays: 0
