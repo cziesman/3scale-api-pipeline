@@ -83,11 +83,11 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
-                            json = openshift.raw("get configmap ${env.CONFIG_MAP} -o json").out
-                            configMap = readJSON(text: json)
+                            yaml = openshift.raw("get configmap ${env.CONFIG_MAP} -o yaml").out
+                            configMap = readYaml(text: yaml)
                             data = configMap.get("data")
                             echo "data = ${data}"
-                            env.DATA = readJSON(text: data)
+                            env.DATA = readYaml(text: data)
                             echo "env.DATA = ${env.DATA}"
 
                             env.ACCESS_TOKEN = env.DATA.get('ACCESS_TOKEN')
