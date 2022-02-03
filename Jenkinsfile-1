@@ -105,7 +105,8 @@ pipeline {
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
 
                             applicationPlan_yaml = configMap.data.applicationPlan_yaml
-                            env.APPLICATION_PLANS = readYaml(text: applicationPlan_yaml)
+                            applicationPlans = readYaml(text: applicationPlan_yaml)
+                            env.APPLICATION_PLANS = applicationPlans.plans
                             echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
                             echo "env.APPLICATION_PLANS.class = " + env.APPLICATION_PLANS.getClass()
 
