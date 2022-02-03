@@ -96,6 +96,9 @@ pipeline {
                             configMap = readJSON(text: json)
                             env.DATA = configMap.get("data")
                             echo "env.DATA = ${env.DATA}"
+
+                            namespace = configMap.get"metadata").get("namespace")
+                            echo "namespace = ${namespace}"
                         }
                     }
                 }
