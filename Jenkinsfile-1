@@ -76,7 +76,7 @@ pipeline {
 
     stages {
 
-        stage("Read the config map") {
+        stage("Initialize environment") {
             steps {
                 script {
 
@@ -85,28 +85,20 @@ pipeline {
 
                             yaml = openshift.raw("get configmap ${env.CONFIG_MAP} -o yaml").out
                             configMap = readYaml(text: yaml)
-                            echo "configMap.data = ${configMap.data}"
 
                             env.ACCESS_TOKEN = configMap.data.ACCESS_TOKEN
-                            echo "env.ACCESS_TOKEN = ${env.ACCESS_TOKEN}"
                             env.APP_BASE_NAME = configMap.data.APP_BASE_NAME
-                            echo "env.APP_BASE_NAME = ${env.APP_BASE_NAME}"
+                            env.APP_OPEN_API_URL = configMap.data.APP_OPEN_API_URL
                             env.APP_SERVICE_NAME = configMap.data.APP_SERVICE_NAME
-                            echo "env.APP_SERVICE_NAME = ${env.APP_SERVICE_NAME}"
                             env.THREESCALE_SERVER_BASE_URL = configMap.data.THREESCALE_SERVER_BASE_URL
-                            echo "env.THREESCALE_SERVER_BASE_URL = ${env.THREESCALE_SERVER_BASE_URL}"
 
                             // 3scale
                             env.THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
-                            echo "env.THREESCALE_SERVER = ${env.THREESCALE_SERVER}"
 
                             // application
                             env.APP_API_NAME = "${APP_BASE_NAME}-api"
-                            echo "env.APP_API_NAME = ${env.APP_API_NAME}"
                             env.APP_BACKEND_ID = "${APP_BASE_NAME}-backend"
-                            echo "env.APP_BACKEND_ID = ${env.APP_BACKEND_ID}"
                             env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
-                            echo "env.APP_SYSTEM_NAME = ${env.APP_SYSTEM_NAME}"
 
                             application_yaml = configMap.data.application_yaml
                             env.APPLICATIONS = readYaml(text: application_yaml)
@@ -115,6 +107,10 @@ pipeline {
                             applicationPlan_yaml = configMap.data.applicationPlan_yaml
                             env.APPLICATION_PLANS = readYaml(text: applicationPlan_yaml)
                             echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
+
+                            env.APPLICATION_PLANS.each { entry ->
+                                echo "entry = ${entry}"
+                            }
                         }
                     }
                 }

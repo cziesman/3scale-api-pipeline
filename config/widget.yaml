@@ -6,6 +6,7 @@ metadata:
 data:
   ACCESS_TOKEN: 23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba
   APP_BASE_NAME: widget
+  APP_OPEN_API_URL: http://widget-app-widget.apps.shared-na46.openshift.opentlc.com/api-docs.yaml
   APP_SERVICE_NAME: Widget API
   THREESCALE_SERVER_BASE_URL: 3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com
   application_yaml: |
