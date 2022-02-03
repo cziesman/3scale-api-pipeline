@@ -98,9 +98,11 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
-                            configMap = openshift.raw("get configmap ${env.CONFIG_MAP} -o json").out
+                            configMapRaw = openshift.raw("get configmap ${env.CONFIG_MAP} -o json").out
+                            echo "configMapRaw = ${configMapRaw}"
+
+                            configMap = parseJsonToMap(configMapRaw)
                             echo "configMap = ${configMap}"
-                            echo "class = " + configMap.class
 
                             data = configMap.get("data")
                             echo "data = ${data}"
