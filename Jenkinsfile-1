@@ -106,7 +106,7 @@ pipeline {
                             application_yaml = configMap.data.application_yaml
                             echo "application_yaml = \n${application_yaml}"
                             Object applications = readYaml(text: application_yaml)
-//                            echo "applications = ${applications}"
+                            echo "applications.class = " + applications.getClass()
                             env.APPLICATIONS = applications.applications
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
 
@@ -123,7 +123,7 @@ pipeline {
                             applicationPlan_yaml = configMap.data.applicationPlan_yaml
                             echo "applicationPlan_yaml = \n${applicationPlan_yaml}"
                             Object applicationPlans = readYaml(text: applicationPlan_yaml)
-//                            echo "applicationPlans = ${applicationPlans}"
+                            echo "applicationPlans.class = " + applicationPlans.getClass()
                             env.APPLICATION_PLANS = applicationPlans.plans
                             echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
 
