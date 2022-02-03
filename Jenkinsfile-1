@@ -244,7 +244,7 @@ pipeline {
                                     params += " --trial-period-days=${plan.trialPeriodDays}"
                                 }
 
-                                commandLine = "3scale application-plan apply --insecure ${params}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${plan.systemName}"
+                                commandLine = "3scale application-plan apply --insecure ${params} ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${plan.systemName}"
                                 jobId = newJob(commandLine)
 
                                 timeout(time: 20, unit: 'SECONDS') {

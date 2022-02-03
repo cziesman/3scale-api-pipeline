@@ -23,10 +23,10 @@ data:
       publish        : true
       costPerMonth   : 0.0
       setupFee       : 0.0
-      trialPeriodDays: 0
+      trialPeriodDays: 30
     - systemName     : 'widget-limited'
       name           : 'Widget Limited'
       publish        : true
       costPerMonth   : 0.0
       setupFee       : 0.0
-      trialPeriodDays: 0
+      trialPeriodDays: 30
