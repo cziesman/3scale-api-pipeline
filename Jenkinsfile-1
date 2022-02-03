@@ -112,6 +112,7 @@ pipeline {
 
                             appList = env.APPLICATIONS[1..-2].split(', ')
                             echo "appList = ${appList}"
+                            echo "appList.class = " + appList.getClass()
 
 
 
@@ -128,6 +129,7 @@ pipeline {
 
                             appPlanList = env.APPLICATION_PLANS[1..-2].split(', ')
                             echo "appPlanList = ${appPlanList}"
+                            echo "appPlanList.class = " + appPlanList.getClass()
                         }
                     }
                 }
