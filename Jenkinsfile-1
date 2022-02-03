@@ -103,7 +103,7 @@ pipeline {
                             application_yaml = configMap.data.application_yaml
                             echo "application_yaml = \n${application_yaml}"
                             applications = readYaml(text: application_yaml)
-                            applications = readJSON(text: applications)
+                            applications = readJSON(text: applications.toString())
                             echo "applications = ${applications}"
                             env.APPLICATIONS = applications.applications
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
@@ -111,7 +111,7 @@ pipeline {
                             applicationPlan_yaml = configMap.data.applicationPlan_yaml
                             echo "applicationPlan_yaml = \n${applicationPlan_yaml}"
                             applicationPlans = readYaml(text: applicationPlan_yaml)
-                            applicationPlans = readJSON(text: applicationPlans)
+                            applicationPlans = readJSON(text: applicationPlans.toString())
                             echo "applicationPlans = ${applicationPlans}"
                             env.APPLICATION_PLANS = applicationPlans.plans
                             echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
