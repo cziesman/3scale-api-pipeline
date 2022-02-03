@@ -100,6 +100,9 @@ pipeline {
 
                             configMap = openshift.raw("get configmap ${env.CONFIG_MAP} -o json").out
                             echo "configMap = ${configMap}"
+
+                            data = configMap.get("data")
+                            echo "data = ${data}"
                         }
                     }
                 }
