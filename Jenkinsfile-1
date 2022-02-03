@@ -95,32 +95,39 @@ pipeline {
                             // 3scale
                             env.THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
 
-                            // application
                             env.APP_API_NAME = "${APP_BASE_NAME}-api"
                             env.APP_BACKEND_ID = "${APP_BASE_NAME}-backend"
                             env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
 
+
+
+
+                            // applications
                             application_yaml = configMap.data.application_yaml
                             echo "application_yaml = \n${application_yaml}"
                             applications = readYaml(text: application_yaml)
-                            echo "applications = ${applications}"
+//                            echo "applications = ${applications}"
                             env.APPLICATIONS = applications.applications
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
 
-                            applications.each { entry ->
-                                echo "applications entry = ${entry}"
-                            }
+                            appList = env.APPLICATIONS[1..-2].split(', ')
+                            echo "appList = ${appList}"
+
+
+
+
+
+
                             // application plans
                             applicationPlan_yaml = configMap.data.applicationPlan_yaml
                             echo "applicationPlan_yaml = \n${applicationPlan_yaml}"
                             applicationPlans = readYaml(text: applicationPlan_yaml)
-                            echo "applicationPlans = ${applicationPlans}"
+//                            echo "applicationPlans = ${applicationPlans}"
                             env.APPLICATION_PLANS = applicationPlans.plans
                             echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
 
-                            applicationPlans.each { entry ->
-                                echo "applicationPlans entry = ${entry}"
-                            }
+                            appPlanList = env.APPLICATION_PLANS[1..-2].split(', ')
+                            echo "appPlanList = ${appPlanList}"
                         }
                     }
                 }
