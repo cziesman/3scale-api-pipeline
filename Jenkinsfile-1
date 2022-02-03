@@ -100,14 +100,14 @@ pipeline {
 
                             yaml = configMap.get("data").get("application.yaml")
                             echo "yaml = ${yaml}"
-                            configMap = readYaml(text: yaml)
-                            env.APPLICATIONS = configMap.get("applications")
+                            applications = readYaml(text: yaml)
+                            env.APPLICATIONS = applications.get("applications")
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
 
                             yaml = configMap.get("data").get("applicationPlan.yaml")
                             echo "yaml = ${yaml}"
-                            configMap = readYaml(text: yaml)
-                            env.APPLICATION_PLANS = configMap.get("plans")
+                            plans = readYaml(text: yaml)
+                            env.APPLICATION_PLANS = plans.get("plans")
                             echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
                         }
                     }
