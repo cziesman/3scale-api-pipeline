@@ -233,7 +233,7 @@ pipeline {
                                     params += " --hide"
                                 }
                                 if (plan.name != null) {
-                                    params += " --name=${plan.name}"
+                                    params += " --name='${plan.name}'"
                                 }
                                 if (Boolean.TRUE.equals(plan.publish)) {
                                     params += " --publish"
