@@ -84,7 +84,9 @@ pipeline {
 
                             yaml = openshift.raw("get configmap ${env.CONFIG_MAP} -o yaml").out
                             configMap = readYaml(text: yaml)
-                            env.DATA = configMap.get("data")
+                            data = configMap.get("data")
+                            echo "data = ${data}"
+                            env.DATA = readYaml(text: data)
                             echo "env.DATA = ${env.DATA}"
 
                             env.ACCESS_TOKEN = configMap.get("data").get('ACCESS_TOKEN')
