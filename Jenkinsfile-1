@@ -67,6 +67,12 @@ String newJob(String commandLine) {
     return jobId
 }
 
+Map parseJsonToMap(String json) {
+
+    slurper = new groovy.json.JsonSlurperClassic()
+    return new HashMap<>(slurper.parseText(json))
+}
+
 pipeline {
 
     agent {
@@ -95,8 +101,7 @@ pipeline {
                             json = openshift.raw("get configmap ${env.CONFIG_MAP} -o json").out
                             echo "json = ${json}"
 
-                            slurper = new groovy.json.JsonSlurper()
-                            configMap = new HashMap<>(slurper.parseText(json))
+                            configMap = parseJsonToMap(json)
                             echo "configMap = ${configMap}"
 
                             data = configMap.get("data")
