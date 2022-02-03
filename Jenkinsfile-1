@@ -107,6 +107,10 @@ pipeline {
                             env.APPLICATIONS = applications.applications
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
 
+                            env.APPLICATIONS.each { entry ->
+                                echo "entry = ${entry}"
+                            }
+                            // application plans
                             applicationPlan_yaml = configMap.data.applicationPlan_yaml
                             echo "applicationPlan_yaml = \n${applicationPlan_yaml}"
                             applicationPlans = readYaml(text: applicationPlan_yaml)
@@ -123,52 +127,52 @@ pipeline {
             }
         }
 
-        stage("Initialize environment") {
-            steps {
-                script {
-
-                    openshift.withCluster() {
-                        openshift.withProject("${env.CICD_NAMESPACE}") {
-
-                            yaml = openshift.raw("get configmap ${env.CONFIG_MAP} -o yaml").out
-                            configMap = readYaml(text: yaml)
-
-                            env.ACCESS_TOKEN = configMap.data.ACCESS_TOKEN
-                            env.APP_BASE_NAME = configMap.data.APP_BASE_NAME
-                            env.APP_OPEN_API_URL = configMap.data.APP_OPEN_API_URL
-                            env.APP_SERVICE_NAME = configMap.data.APP_SERVICE_NAME
-                            env.THREESCALE_SERVER_BASE_URL = configMap.data.THREESCALE_SERVER_BASE_URL
-
-                            // 3scale
-                            env.THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
-
-                            // application
-                            env.APP_API_NAME = "${APP_BASE_NAME}-api"
-                            env.APP_BACKEND_ID = "${APP_BASE_NAME}-backend"
-                            env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
-
-                            application_yaml = configMap.data.application_yaml
-                            echo "application_yaml = \n${application_yaml}"
-                            applications = readYaml(text: application_yaml)
-                            echo "applications = ${applications}"
-                            env.APPLICATIONS = applications.applications
-                            echo "env.APPLICATIONS = ${env.APPLICATIONS}"
-
-                            applicationPlan_yaml = configMap.data.applicationPlan_yaml
-                            echo "applicationPlan_yaml = \n${applicationPlan_yaml}"
-                            applicationPlans = readYaml(text: applicationPlan_yaml)
-                            echo "applicationPlans = ${applicationPlans}"
-                            env.APPLICATION_PLANS = applicationPlans.plans
-                            echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
-
-                            env.APPLICATION_PLANS.each { entry ->
-                                echo "entry = ${entry}"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//        stage("Initialize environment") {
+//            steps {
+//                script {
+//
+//                    openshift.withCluster() {
+//                        openshift.withProject("${env.CICD_NAMESPACE}") {
+//
+//                            yaml = openshift.raw("get configmap ${env.CONFIG_MAP} -o yaml").out
+//                            configMap = readYaml(text: yaml)
+//
+//                            env.ACCESS_TOKEN = configMap.data.ACCESS_TOKEN
+//                            env.APP_BASE_NAME = configMap.data.APP_BASE_NAME
+//                            env.APP_OPEN_API_URL = configMap.data.APP_OPEN_API_URL
+//                            env.APP_SERVICE_NAME = configMap.data.APP_SERVICE_NAME
+//                            env.THREESCALE_SERVER_BASE_URL = configMap.data.THREESCALE_SERVER_BASE_URL
+//
+//                            // 3scale
+//                            env.THREESCALE_SERVER = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
+//
+//                            // application
+//                            env.APP_API_NAME = "${APP_BASE_NAME}-api"
+//                            env.APP_BACKEND_ID = "${APP_BASE_NAME}-backend"
+//                            env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
+//
+//                            application_yaml = configMap.data.application_yaml
+//                            echo "application_yaml = \n${application_yaml}"
+//                            applications = readYaml(text: application_yaml)
+//                            echo "applications = ${applications}"
+//                            env.APPLICATIONS = applications.applications
+//                            echo "env.APPLICATIONS = ${env.APPLICATIONS}"
+//
+//                            applicationPlan_yaml = configMap.data.applicationPlan_yaml
+//                            echo "applicationPlan_yaml = \n${applicationPlan_yaml}"
+//                            applicationPlans = readYaml(text: applicationPlan_yaml)
+//                            echo "applicationPlans = ${applicationPlans}"
+//                            env.APPLICATION_PLANS = applicationPlans.plans
+//                            echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
+//
+//                            env.APPLICATION_PLANS.each { entry ->
+//                                echo "entry = ${entry}"
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
 //        stage("Import OpenAPI spec") {
 //            steps {
