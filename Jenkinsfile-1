@@ -107,8 +107,8 @@ pipeline {
                             env.APPLICATIONS = applications.applications
                             echo "env.APPLICATIONS = ${env.APPLICATIONS}"
 
-                            env.APPLICATIONS.each { entry ->
-                                echo "entry = ${entry}"
+                            applications.each { entry ->
+                                echo "applications entry = ${entry}"
                             }
                             // application plans
                             applicationPlan_yaml = configMap.data.applicationPlan_yaml
@@ -118,8 +118,8 @@ pipeline {
                             env.APPLICATION_PLANS = applicationPlans.plans
                             echo "env.APPLICATION_PLANS = ${env.APPLICATION_PLANS}"
 
-                            env.APPLICATION_PLANS.each { entry ->
-                                echo "entry = ${entry}"
+                            applicationPlans.each { entry ->
+                                echo "applicationPlans entry = ${entry}"
                             }
                         }
                     }
