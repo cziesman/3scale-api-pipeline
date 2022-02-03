@@ -144,33 +144,34 @@ pipeline {
 //            }
 //        }
 
-//        stage("Create a Service") {
-//            steps {
-//                script {
-//
-//                    openshift.withCluster() {
-//                        openshift.withProject("${env.CICD_NAMESPACE}") {
-//                            commandLine = "3scale service apply --insecure --name='${env.APP_SERVICE_NAME}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME}"
-//                            echo "commandLine = ${commandLine}"
-//                            jobId = newJob(commandLine)
-//
-//                            timeout(time: 20, unit: 'SECONDS') {
-//                                node {
-//                                    pod = waitForPod(jobId)
-//
-//                                    waitForSuccessfulCompletion(pod)
-//
-//                                    jobOutput = openshift.raw("logs ${pod}").out
-//                                    echo "jobOutput = ${jobOutput}"
-//                                }
-//                            }
-//
-//                            openshift.raw("delete job ${jobId}")
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        stage("Create a Service") {
+            steps {
+                script {
+
+                    openshift.withCluster() {
+                        openshift.withProject("${env.CICD_NAMESPACE}") {
+
+                            commandLine = "3scale service apply --insecure --name='${env.APP_SERVICE_NAME}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME}"
+                            echo "commandLine = ${commandLine}"
+                            jobId = newJob(commandLine)
+
+                            timeout(time: 20, unit: 'SECONDS') {
+                                node {
+                                    pod = waitForPod(jobId)
+
+                                    waitForSuccessfulCompletion(pod)
+
+                                    jobOutput = openshift.raw("logs ${pod}").out
+                                    echo "jobOutput = ${jobOutput}"
+                                }
+                            }
+
+                            openshift.raw("delete job ${jobId}")
+                        }
+                    }
+                }
+            }
+        }
 
 //        stage('Get list of services') {
 //            steps {
