@@ -4,6 +4,7 @@
 //def publicStagingBaseURL = "3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com"
 //def publicProductionBaseURL = "3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com"
 
+def imageName = "quay.io/redhat/3scale-toolbox"
 
 String jobId() {
 
@@ -50,7 +51,7 @@ String newJob(String commandLine) {
 
     jobId = jobId()
 
-    openshift.raw("create job ${jobId} --image=quay.io/redhat/3scale-toolbox -- ${commandLine}")
+    openshift.raw("create job ${jobId} --image=${imageName} -- ${commandLine}")
 
     return jobId
 }
@@ -133,7 +134,7 @@ pipeline {
 
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
-                            commandLine = "3scale service apply --insecure --name ${APP_SYSTEM_NAME} ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_ID}"
+                            commandLine = "3scale service create --insecure --name ${APP_SYSTEM_NAME} ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_ID}"
                             jobId = newJob(commandLine)
 
                             timeout(time: 20, unit: 'SECONDS') {
