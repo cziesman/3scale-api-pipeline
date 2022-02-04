@@ -18,9 +18,9 @@ data:
         systemName     : widget-service
   openapi_yaml: |
     backends:
-      - output           : yaml
+      - output           : json
         skipValidation   : true
-        targetSystemName : Widget Service API
+        targetSystemName : widget-service
   application_yaml: |
     applications:
       - name           : Widget API

@@ -261,7 +261,7 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
-                            commandLine = "3scale service list --output=json ${env.DESTINATION}"
+                            commandLine = "3scale service list --insecure --output=json ${env.DESTINATION}"
                             jobId = newJob(commandLine)
 
                             timeout(time: 20, unit: 'SECONDS') {
