@@ -160,49 +160,49 @@ pipeline {
             }
         }
 
-        stage("Create a Service") {
-            steps {
-                script {
-
-                    openshift.withCluster() {
-                        openshift.withProject("${env.CICD_NAMESPACE}") {
-
-                            def options = [
-                                    'authMode'      : ' --authentication-mode=',
-                                    'deploymentMode': ' --deployment-mode=',
-                                    'description'   : ' --description=',
-                                    'name'          : ' --name=',
-                                    'output'        : ' --output=',
-                                    'supportEmail'  : ' --support-email='
-                            ]
-
-                            SERVICES.each { service ->
-
-                                echo "service = ${service}"
-                                def params = params(options, service)
-
-                                commandLine = "3scale service apply ${params} ${env.DESTINATION} ${service.systemName}"
-                                echo "commandLine = ${commandLine}"
-                                jobId = newJob(commandLine)
-
-                                timeout(time: 20, unit: 'SECONDS') {
-                                    node {
-                                        pod = waitForPod(jobId)
-
-                                        waitForSuccessfulCompletion(pod)
-
-                                        jobOutput = openshift.raw("logs ${pod}").out
-                                        echo "jobOutput = ${jobOutput}"
-                                    }
-                                }
-
-                                openshift.raw("delete job ${jobId}")
-                            }
-                        }
-                    }
-                }
-            }
-        }
+//        stage("Create a Service") {
+//            steps {
+//                script {
+//
+//                    openshift.withCluster() {
+//                        openshift.withProject("${env.CICD_NAMESPACE}") {
+//
+//                            def options = [
+//                                    'authMode'      : ' --authentication-mode=',
+//                                    'deploymentMode': ' --deployment-mode=',
+//                                    'description'   : ' --description=',
+//                                    'name'          : ' --name=',
+//                                    'output'        : ' --output=',
+//                                    'supportEmail'  : ' --support-email='
+//                            ]
+//
+//                            SERVICES.each { service ->
+//
+//                                echo "service = ${service}"
+//                                def params = params(options, service)
+//
+//                                commandLine = "3scale service apply ${params} ${env.DESTINATION} ${service.systemName}"
+//                                echo "commandLine = ${commandLine}"
+//                                jobId = newJob(commandLine)
+//
+//                                timeout(time: 20, unit: 'SECONDS') {
+//                                    node {
+//                                        pod = waitForPod(jobId)
+//
+//                                        waitForSuccessfulCompletion(pod)
+//
+//                                        jobOutput = openshift.raw("logs ${pod}").out
+//                                        echo "jobOutput = ${jobOutput}"
+//                                    }
+//                                }
+//
+//                                openshift.raw("delete job ${jobId}")
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
         stage("Import OpenAPI spec") {
             steps {

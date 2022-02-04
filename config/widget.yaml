@@ -16,12 +16,11 @@ data:
         systemName     : widget-service
   openapi_yaml: |
     backends:
-      - openApiUrl              : http://widget-app-widget.apps.shared-na46.openshift.opentlc.com/api-docs.yaml
-        output                  : json
-        productionPublicBaseUrl : 3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com
-        skipValidation          : true
-        stagingPublicBaseUrl    : 3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com
-        targetSystemName        : widget-service
+      - openApiUrl                : http://widget-app-widget.apps.shared-na46.openshift.opentlc.com/api-docs.yaml
+        defaultCredentialsUserKey : some-random-key
+        output                    : json
+        skipValidation            : true
+        targetSystemName          : new-widget-service
   application_yaml: |
     applications:
       - name           : Widget API
