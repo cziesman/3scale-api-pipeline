@@ -298,15 +298,18 @@ pipeline {
                                 application.each { entry ->
 
                                     option = options[entry.key]
+                                    echo "option = ${option}"
 
                                     if (option != null) {
+                                        echo "option.value = ${option.value}"
                                         params += option.value.toString()
                                         if (option?.value?.toString().endsWith("=")) {
+                                            echo "entry.value = ${entry.value}"
                                             params += entry.value.toString()
                                         }
                                     }
                                 }
-                                echo "${params} = ${params}"
+                                echo "params = ${params}"
                             }
                         }
                     }
