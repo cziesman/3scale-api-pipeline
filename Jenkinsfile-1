@@ -300,9 +300,9 @@ pipeline {
                                     option = options[entry.key]
 
                                     if (option != null) {
-                                        params += option.value
+                                        params += option.value.toString()
                                         if (option?.value?.toString().endsWith("=")) {
-                                            params += entry.value
+                                            params += entry.value.toString()
                                         }
                                     }
                                 }
