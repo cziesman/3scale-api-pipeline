@@ -301,7 +301,7 @@ pipeline {
 
                                     if (option != null) {
                                         params += option.value
-                                        if (option?.value?.endsWith("=")) {
+                                        if (option?.value?.toString().endsWith("=")) {
                                             params += entry.value
                                         }
                                     }
