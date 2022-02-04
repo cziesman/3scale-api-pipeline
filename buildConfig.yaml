@@ -1,0 +1,29 @@
+﻿kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: widget-app
+  namespace: jenkins
+spec:
+  nodeSelector: null
+  output: {}
+  resources: {}
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
+  strategy:
+    type: JenkinsPipeline
+    jenkinsPipelineStrategy:
+      jenkinsfilePath: Jenkinsfile
+      env:
+        - name: CONFIG_MAP
+          value: widget
+        - name: CICD_NAMESPACE
+          value: jenkins
+  postCommit: {}
+  source:
+    type: Git
+    git:
+      uri: 'https://gitlab.consulting.redhat.com/cziesman/3scale-jenkins.git'
+      ref: main
+    sourceSecret:
+      name: consulting-gitlab-secret
+  runPolicy: Serial

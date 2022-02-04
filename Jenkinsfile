@@ -3,7 +3,6 @@
 List APPLICATIONS
 List APPLICATION_PLANS
 List BACKENDS
-List SERVICES
 
 imageName = "quay.io/redhat/3scale-toolbox"
 
@@ -135,11 +134,6 @@ pipeline {
                             env.THREESCALE_SERVER_BASE_URL = configMap.data.THREESCALE_SERVER_BASE_URL
                             env.DESTINATION = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
 
-                            // services
-                            service_yaml = configMap.data.service_yaml
-                            services = readYaml(text: service_yaml)
-                            SERVICES = services.products
-
                             // backends
                             openapi_yaml = configMap.data.openapi_yaml
                             backends = readYaml(text: openapi_yaml)
@@ -159,50 +153,6 @@ pipeline {
                 }
             }
         }
-
-//        stage("Create a Service") {
-//            steps {
-//                script {
-//
-//                    openshift.withCluster() {
-//                        openshift.withProject("${env.CICD_NAMESPACE}") {
-//
-//                            def options = [
-//                                    'authMode'      : ' --authentication-mode=',
-//                                    'deploymentMode': ' --deployment-mode=',
-//                                    'description'   : ' --description=',
-//                                    'name'          : ' --name=',
-//                                    'output'        : ' --output=',
-//                                    'supportEmail'  : ' --support-email='
-//                            ]
-//
-//                            SERVICES.each { service ->
-//
-//                                echo "service = ${service}"
-//                                def params = params(options, service)
-//
-//                                commandLine = "3scale service apply ${params} ${env.DESTINATION} ${service.systemName}"
-//                                echo "commandLine = ${commandLine}"
-//                                jobId = newJob(commandLine)
-//
-//                                timeout(time: 20, unit: 'SECONDS') {
-//                                    node {
-//                                        pod = waitForPod(jobId)
-//
-//                                        waitForSuccessfulCompletion(pod)
-//
-//                                        jobOutput = openshift.raw("logs ${pod}").out
-//                                        echo "jobOutput = ${jobOutput}"
-//                                    }
-//                                }
-//
-//                                openshift.raw("delete job ${jobId}")
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
         stage("Import OpenAPI spec") {
             steps {
