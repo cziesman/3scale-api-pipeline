@@ -9,26 +9,40 @@ data:
   APP_OPEN_API_URL: http://widget-app-widget.apps.shared-na46.openshift.opentlc.com/api-docs.yaml
   APP_SERVICE_NAME: Widget API
   THREESCALE_SERVER_BASE_URL: 3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com
+  service_yaml: |
+    products:
+      - authMode       : true
+        deploymentMode : true
+        description    : The Widget Service
+        name           : Widget Service
+        output         : yaml
+        supportEmail   : bozo@clown.com
+        systemName     : widget-service
+  openapi_yaml: |
+    backends:
+      - output           : yaml
+        skipValidation   : true
+        targetSystemName : widget-service
   application_yaml: |
     applications:
-    - name           : Widget API
-      description    : The widget App
-      plan           : widget-unlimited
-      account        : john
-      service        : widget-backend
-      systemName     : widget-app
+      - name           : Widget API
+        description    : The widget App
+        plan           : widget-unlimited
+        account        : john
+        service        : widget-backend
+        systemName     : widget-app
   applicationPlan_yaml: |
     plans:
-    - systemName     : widget-unlimited
-      name           : Widget Unlimited
-      default        : true
-      publish        : true
-      costPerMonth   : 0.0
-      setupFee       : 0.0
-      trialPeriodDays: 30
-    - systemName     : widget-limited
-      name           : Widget Limited
-      publish        : true
-      costPerMonth   : 0.0
-      setupFee       : 0.0
-      trialPeriodDays: 30
+      - systemName     : widget-unlimited
+        name           : Widget Unlimited
+        default        : true
+        publish        : true
+        costPerMonth   : 0.0
+        setupFee       : 0.0
+        trialPeriodDays: 30
+      - systemName     : widget-limited
+        name           : Widget Limited
+        publish        : true
+        costPerMonth   : 0.0
+        setupFee       : 0.0
+        trialPeriodDays: 30
