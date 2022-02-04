@@ -1,8 +1,5 @@
 #!groovy
 
-//def publicStagingBaseURL = "3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com"
-//def publicProductionBaseURL = "3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com"
-
 List APPLICATIONS
 List APPLICATION_PLANS
 
@@ -72,7 +69,7 @@ String newJob(String commandLine) {
 
 String params(Map options, List config) {
 
-    params = ""
+    params = " --insecure"
     config.each { application ->
 
         application.each { key, value ->
@@ -144,7 +141,7 @@ pipeline {
 
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
-                            commandLine = "3scale import openapi --target_system_name=${env.APP_BACKEND_ID} --destination=${env.THREESCALE_SERVER} --backend ${env.APP_OPEN_API_URL}"
+                            commandLine = "3scale import openapi --insecure --target_system_name=${env.APP_BACKEND_ID} --destination=${env.THREESCALE_SERVER} --backend ${env.APP_OPEN_API_URL}"
                             jobId = newJob(commandLine)
 
                             timeout(time: 20, unit: 'SECONDS') {
@@ -172,7 +169,7 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
-                            commandLine = "3scale service apply --name='${env.APP_SERVICE_NAME}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME}"
+                            commandLine = "3scale service apply --insecure --name='${env.APP_SERVICE_NAME}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME}"
                             echo "commandLine = ${commandLine}"
                             jobId = newJob(commandLine)
 
