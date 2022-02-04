@@ -161,7 +161,7 @@ pipeline {
 
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
-                            commandLine = "3scale import openapi --insecure --target_system_name=${env.APP_BACKEND_ID} --destination=${env.THREESCALE_SERVER} --backend ${env.APP_OPEN_API_URL}"
+                            commandLine = "3scale import openapi --insecure --backend --target_system_name=${env.APP_BACKEND_ID} --destination=${env.THREESCALE_SERVER} --backend ${env.APP_OPEN_API_URL}"
                             jobId = newJob(commandLine)
 
                             timeout(time: 20, unit: 'SECONDS') {
