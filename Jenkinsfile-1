@@ -70,6 +70,27 @@ String newJob(String commandLine) {
     return jobId
 }
 
+String params(Map options, Map config) {
+
+    params = "--insecure "
+    config.each { application ->
+
+        application.each { key, value ->
+
+            option = options[key]
+
+            if (option != null) {
+                params += option
+                if (option.endsWith("=")) {
+                    params += "'${value}'"
+                }
+            }
+        }
+    }
+
+    return params
+}
+
 pipeline {
 
     agent {
@@ -289,27 +310,8 @@ pipeline {
                                     'userKey'       : ' --user-key='
                             ]
 
-                            params = ""
-                            APPLICATIONS.each { application ->
-
-                                echo "application = ${application}"
-                                echo "application.class = " + application.getClass()
-
-                                application.each { key, value ->
-
-                                    echo "${key} :: ${value}"
-                                    option = options[key]
-                                    echo "option = ${option}"
-
-                                    if (option != null) {
-                                        params += option
-                                        if (option.endsWith("=")) {
-                                            params += value
-                                        }
-                                    }
-                                }
-                                echo "params = ${params}"
-                            }
+                            params = params(options, APPLICATIONS)
+                            echo "params = ${params}"
                         }
                     }
                 }
