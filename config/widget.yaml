@@ -12,7 +12,7 @@ data:
   service_yaml: |
     products:
       - description    : The Widget Service
-        name           : Widget Service
+        name           : Widget Service API
         output         : yaml
         supportEmail   : bozo@clown.com
         systemName     : widget-service
@@ -20,7 +20,7 @@ data:
     backends:
       - output           : yaml
         skipValidation   : true
-        targetSystemName : widget-service
+        targetSystemName : Widget Service API
   application_yaml: |
     applications:
       - name           : Widget API
