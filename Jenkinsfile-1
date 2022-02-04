@@ -243,6 +243,7 @@ pipeline {
 
                                 echo "options.class = " + options.getClass()
                                 echo "plan.class = " + plan.getClass()
+                                echo "plan = ${plan}"
                                 def params = params(options, plan)
 
                                 commandLine = "3scale application-plan apply ${params} ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${plan.systemName}"
