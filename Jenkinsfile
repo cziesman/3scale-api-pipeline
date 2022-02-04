@@ -212,11 +212,21 @@ pipeline {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
                             def options = [
-                                    'output'          : ' --output=',
-                                    'overrideUrl'     : ' --override-private-base-url',
-                                    'prefixMatching'  : ' --prefix-matching',
-                                    'skipValidation'  : ' --skip-openapi-validation',
-                                    'targetSystemName': ' --target_system_name='
+                                    'activeDocsHidden'         : ' --activedocs-hidden',
+                                    'backendApiHostHeader'     : ' --backend-api-host-header=',
+                                    'backendApiSecretToken'    : ' --backend-api-secret-token=',
+                                    'defaultCredentialsUserKey': ' --default-credentials-userkey=',
+                                    'output'                   : ' --output=',
+                                    'oidcIssuerEndpoint'       : ' --oidc-issuer-endpoint=',
+                                    'oidcIssuerType'           : ' --oidc-issuer-type=',
+                                    'overridePrivateBaseUrl'   : ' --override-private-base-url',
+                                    'overridePrivateBasePath'  : ' --override-private-basepath',
+                                    'overridePublicBasePath'   : ' --override-public-basepath',
+                                    'prefixMatching'           : ' --prefix-matching',
+                                    'productionPublicBaseUrl'  : ' --production-public-base-url',
+                                    'skipValidation'           : ' --skip-openapi-validation',
+                                    'stagingPublicBaseUrl'     : ' --staging-public-base-url',
+                                    'targetSystemName'         : ' --target_system_name='
                             ]
 
                             BACKENDS.each { backend ->

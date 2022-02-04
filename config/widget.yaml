@@ -16,10 +16,12 @@ data:
         systemName     : widget-service
   openapi_yaml: |
     backends:
-      - openApiUrl       : http://widget-app-widget.apps.shared-na46.openshift.opentlc.com/api-docs.yaml
-        output           : json
-        skipValidation   : true
-        targetSystemName : widget-service
+      - openApiUrl              : http://widget-app-widget.apps.shared-na46.openshift.opentlc.com/api-docs.yaml
+        output                  : json
+        productionPublicBaseUrl : 3scale-apicast-production.6dsvl.apps.shared-na46.openshift.opentlc.com
+        skipValidation          : true
+        stagingPublicBaseUrl    : 3scale-apicast-staging.6dsvl.apps.shared-na46.openshift.opentlc.com
+        targetSystemName        : widget-service
   application_yaml: |
     applications:
       - name           : Widget API
@@ -33,6 +35,7 @@ data:
       - systemName       : widget-unlimited
         name             : Widget Unlimited
         default          : true
+        enabled          : true
         publish          : true
         costPerMonth     : 0.0
         setupFee         : 0.0
@@ -40,6 +43,7 @@ data:
         trialPeriodDays  : 30
       - systemName       : widget-limited
         name             : Widget Limited
+        enabled          : true
         publish          : true
         costPerMonth     : 0.0
         setupFee         : 0.0
