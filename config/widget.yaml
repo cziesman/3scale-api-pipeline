@@ -27,7 +27,7 @@ data:
         description    : The widget App
         plan           : widget-unlimited
         account        : john
-        service        : widget-service
+        service        : new-widget-service
         systemName     : widget-app
   applicationPlan_yaml: |
     plans:
@@ -38,7 +38,7 @@ data:
         publish          : true
         costPerMonth     : 0.0
         setupFee         : 0.0
-        targetSystemName : widget-service
+        targetSystemName : new-widget-service
         trialPeriodDays  : 30
       - systemName       : widget-limited
         name             : Widget Limited
@@ -46,5 +46,5 @@ data:
         publish          : true
         costPerMonth     : 0.0
         setupFee         : 0.0
-        targetSystemName : widget-service
+        targetSystemName : new-widget-service
         trialPeriodDays  : 30
