@@ -132,7 +132,6 @@ pipeline {
                             env.ACCESS_TOKEN = configMap.data.ACCESS_TOKEN
                             env.APP_BASE_NAME = configMap.data.APP_BASE_NAME
                             env.APP_OPEN_API_URL = configMap.data.APP_OPEN_API_URL
-                            env.APP_SERVICE_NAME = configMap.data.APP_SERVICE_NAME
                             env.THREESCALE_SERVER_BASE_URL = configMap.data.THREESCALE_SERVER_BASE_URL
                             env.DESTINATION = "https://${env.ACCESS_TOKEN}@${env.THREESCALE_SERVER_BASE_URL}"
 
@@ -155,12 +154,6 @@ pipeline {
                             applicationPlan_yaml = configMap.data.applicationPlan_yaml
                             applicationPlans = readYaml(text: applicationPlan_yaml)
                             APPLICATION_PLANS = applicationPlans.plans
-
-                            // 3scale
-                            env.APP_API_NAME = "${APP_BASE_NAME}-api"
-                            env.APP_BACKEND_ID = "${APP_BASE_NAME}-backend"
-                            env.APP_SYSTEM_NAME = "${APP_BASE_NAME}-2-system"
-
                         }
                     }
                 }
@@ -283,105 +276,105 @@ pipeline {
         }
 
 
-//        stage("Create Application Plans") {
-//            steps {
-//                script {
-//
-//                    openshift.withCluster() {
-//                        openshift.withProject("${env.CICD_NAMESPACE}") {
-//
-//                            def options = [
-//                                    'approvalRequired': ' --approval-required=',
-//                                    'costPerMonth'    : ' --cost-per-month=',
-//                                    'default'         : ' --default',
-//                                    'disabled'        : ' --disabled',
-//                                    'enabled'         : ' --enabled',
-//                                    'hide'            : ' --hide',
-//                                    'name'            : ' --name=',
-//                                    'output'          : ' --output=',
-//                                    'publish'         : ' --publish',
-//                                    'setupFee'        : ' --setup-fee=',
-//                                    'trialPeriodDays' : ' --trial-period-days='
-//                            ]
-//
-//                            APPLICATION_PLANS.each { plan ->
-//
-//                                echo "plan = ${plan}"
-//                                def params = params(options, plan)
-//
-//                                commandLine = "3scale application-plan apply ${params} ${env.DESTINATION} ${env.APP_SYSTEM_NAME} ${plan.systemName}"
-//                                echo "commandLine = ${commandLine}"
-//                                jobId = newJob(commandLine)
-//
-//                                timeout(time: 20, unit: 'SECONDS') {
-//                                    node {
-//                                        pod = waitForPod(jobId)
-//
-//                                        waitForSuccessfulCompletion(pod)
-//
-//                                        jobOutput = openshift.raw("logs ${pod}").out
-//                                        echo "jobOutput = ${jobOutput}"
-//                                    }
-//                                }
-//
-//                                openshift.raw("delete job ${jobId}")
-//
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        stage("Create Applications") {
-//            steps {
-//                script {
-//
-//                    openshift.withCluster() {
-//                        openshift.withProject("${env.CICD_NAMESPACE}") {
-//
-//                            def options = [
-//                                    'account'       : ' --account=',
-//                                    'applicationKey': ' --application-key=',
-//                                    'description'   : ' --description=',
-//                                    'name'          : ' --name=',
-//                                    'output'        : ' --output=',
-//                                    'plan'          : ' --plan=',
-//                                    'redirectUrl'   : ' --redirect-url=',
-//                                    'resume'        : ' --resume',
-//                                    'service'       : ' --service=',
-//                                    'suspend'       : ' --suspend',
-//                                    'userKey'       : ' --user-key='
-//                            ]
-//
-//                            APPLICATIONS.each { application ->
-//
-//                                echo "application = ${application}"
-//                                def params = params(options, application)
-//
-//                                commandLine = "3scale application apply ${params} ${env.DESTINATION} ${application.systemName}"
-//                                echo "commandLine = ${commandLine}"
-//                                jobId = newJob(commandLine)
-//
-//                                timeout(time: 20, unit: 'SECONDS') {
-//                                    node {
-//                                        pod = waitForPod(jobId)
-//
-//                                        waitForSuccessfulCompletion(pod)
-//
-//                                        jobOutput = openshift.raw("logs ${pod}").out
-//                                        echo "jobOutput = ${jobOutput}"
-//                                    }
-//                                }
-//
-//                                openshift.raw("delete job ${jobId}")
-//
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        stage("Create Application Plans") {
+            steps {
+                script {
+
+                    openshift.withCluster() {
+                        openshift.withProject("${env.CICD_NAMESPACE}") {
+
+                            def options = [
+                                    'approvalRequired': ' --approval-required=',
+                                    'costPerMonth'    : ' --cost-per-month=',
+                                    'default'         : ' --default',
+                                    'disabled'        : ' --disabled',
+                                    'enabled'         : ' --enabled',
+                                    'hide'            : ' --hide',
+                                    'name'            : ' --name=',
+                                    'output'          : ' --output=',
+                                    'publish'         : ' --publish',
+                                    'setupFee'        : ' --setup-fee=',
+                                    'trialPeriodDays' : ' --trial-period-days='
+                            ]
+
+                            APPLICATION_PLANS.each { plan ->
+
+                                echo "plan = ${plan}"
+                                def params = params(options, plan)
+
+                                commandLine = "3scale application-plan apply ${params} ${env.DESTINATION} ${plan.targetSystemName} ${plan.systemName}"
+                                echo "commandLine = ${commandLine}"
+                                jobId = newJob(commandLine)
+
+                                timeout(time: 20, unit: 'SECONDS') {
+                                    node {
+                                        pod = waitForPod(jobId)
+
+                                        waitForSuccessfulCompletion(pod)
+
+                                        jobOutput = openshift.raw("logs ${pod}").out
+                                        echo "jobOutput = ${jobOutput}"
+                                    }
+                                }
+
+                                openshift.raw("delete job ${jobId}")
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("Create Applications") {
+            steps {
+                script {
+
+                    openshift.withCluster() {
+                        openshift.withProject("${env.CICD_NAMESPACE}") {
+
+                            def options = [
+                                    'account'       : ' --account=',
+                                    'applicationKey': ' --application-key=',
+                                    'description'   : ' --description=',
+                                    'name'          : ' --name=',
+                                    'output'        : ' --output=',
+                                    'plan'          : ' --plan=',
+                                    'redirectUrl'   : ' --redirect-url=',
+                                    'resume'        : ' --resume',
+                                    'service'       : ' --service=',
+                                    'suspend'       : ' --suspend',
+                                    'userKey'       : ' --user-key='
+                            ]
+
+                            APPLICATIONS.each { application ->
+
+                                echo "application = ${application}"
+                                def params = params(options, application)
+
+                                commandLine = "3scale application apply ${params} ${env.DESTINATION} ${application.systemName}"
+                                echo "commandLine = ${commandLine}"
+                                jobId = newJob(commandLine)
+
+                                timeout(time: 20, unit: 'SECONDS') {
+                                    node {
+                                        pod = waitForPod(jobId)
+
+                                        waitForSuccessfulCompletion(pod)
+
+                                        jobOutput = openshift.raw("logs ${pod}").out
+                                        echo "jobOutput = ${jobOutput}"
+                                    }
+                                }
+
+                                openshift.raw("delete job ${jobId}")
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     }
 }
