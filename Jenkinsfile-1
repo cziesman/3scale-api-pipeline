@@ -72,7 +72,7 @@ String newJob(String commandLine) {
 
 String params(Map options, List config) {
 
-    params = "--insecure "
+    params = ""
     config.each { application ->
 
         application.each { key, value ->
@@ -144,7 +144,7 @@ pipeline {
 
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
-                            commandLine = "3scale import openapi --insecure --target_system_name=${env.APP_BACKEND_ID} --destination=${env.THREESCALE_SERVER} --backend ${env.APP_OPEN_API_URL}"
+                            commandLine = "3scale import openapi --target_system_name=${env.APP_BACKEND_ID} --destination=${env.THREESCALE_SERVER} --backend ${env.APP_OPEN_API_URL}"
                             jobId = newJob(commandLine)
 
                             timeout(time: 20, unit: 'SECONDS') {
@@ -172,7 +172,7 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
-                            commandLine = "3scale service apply --insecure --name='${env.APP_SERVICE_NAME}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME}"
+                            commandLine = "3scale service apply --name='${env.APP_SERVICE_NAME}' ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME}"
                             echo "commandLine = ${commandLine}"
                             jobId = newJob(commandLine)
 
@@ -200,7 +200,7 @@ pipeline {
 //
 //                    openshift.withCluster() {
 //                        openshift.withProject("${env.CICD_NAMESPACE}") {
-//                            commandLine = "3scale service list --insecure --output=json ${env.THREESCALE_SERVER}"
+//                            commandLine = "3scale service list --output=json ${env.THREESCALE_SERVER}"
 //                            jobId = newJob(commandLine)
 //
 //                            timeout(time: 20, unit: 'SECONDS') {
@@ -228,43 +228,25 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
+                            def options = [
+                                    'approvalRequired': ' --approval-required=',
+                                    'costPerMonth'    : ' --cost-per-month=',
+                                    'default'         : ' --default',
+                                    'disabled'        : ' --disabled',
+                                    'enabled'         : ' --enabled',
+                                    'hide'            : ' --hide',
+                                    'name'            : ' --name=',
+                                    'output'          : ' --output=',
+                                    'publish'         : ' --publish',
+                                    'setupFee'        : ' --setup-fee=',
+                                    'trialPeriodDays' : ' --trial-period-days='
+                            ]
+
                             APPLICATION_PLANS.each { plan ->
 
-                                params = ""
-                                if (Boolean.TRUE.equals(plan.approvalRequired)) {
-                                    params += " --approval-required=true"
-                                } else {
-                                    params += " --approval-required=false"
-                                }
-                                if (plan.costPerMonth != null) {
-                                    params += " --cost-per-month=${plan.costPerMonth}"
-                                }
-                                if (Boolean.TRUE.equals(plan.defaultPlan)) {
-                                    params += " --default"
-                                }
-                                if (Boolean.TRUE.equals(plan.disabled)) {
-                                    params += " --disabled"
-                                }
-                                if (Boolean.TRUE.equals(plan.enabled)) {
-                                    params += " --enabled"
-                                }
-                                if (Boolean.TRUE.equals(plan.hide)) {
-                                    params += " --hide"
-                                }
-                                if (plan.name != null) {
-                                    params += " --name='${plan.name}'"
-                                }
-                                if (Boolean.TRUE.equals(plan.publish)) {
-                                    params += " --publish"
-                                }
-                                if (plan.setupFee != null) {
-                                    params += " --setup-fee=${plan.setupFee}"
-                                }
-                                if (plan.trialPeriodDays != null) {
-                                    params += " --trial-period-days=${plan.trialPeriodDays}"
-                                }
+                                def params = params(options, plan)
 
-                                commandLine = "3scale application-plan apply --insecure ${params} ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${plan.systemName}"
+                                commandLine = "3scale application-plan apply ${params} ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${plan.systemName}"
                                 echo "commandLine = ${commandLine}"
                                 jobId = newJob(commandLine)
 
@@ -310,8 +292,28 @@ pipeline {
                                     'userKey'       : ' --user-key='
                             ]
 
-                            def params = params(options, APPLICATIONS)
-                            echo "params = ${params}"
+                            APPLICATIONS.each { application ->
+
+                                def params = params(options, application)
+
+                                commandLine = "3scale application apply ${params} ${env.THREESCALE_SERVER} ${application.systemName}"
+                                echo "commandLine = ${commandLine}"
+                                jobId = newJob(commandLine)
+
+                                timeout(time: 20, unit: 'SECONDS') {
+                                    node {
+                                        pod = waitForPod(jobId)
+
+                                        waitForSuccessfulCompletion(pod)
+
+                                        jobOutput = openshift.raw("logs ${pod}").out
+                                        echo "jobOutput = ${jobOutput}"
+                                    }
+                                }
+
+                                openshift.raw("delete job ${jobId}")
+
+                            }
                         }
                     }
                 }
