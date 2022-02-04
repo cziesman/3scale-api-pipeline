@@ -11,9 +11,7 @@ data:
   THREESCALE_SERVER_BASE_URL: 3scale-admin.6dsvl.apps.shared-na46.openshift.opentlc.com
   service_yaml: |
     products:
-      - authMode       : true
-        deploymentMode : true
-        description    : The Widget Service
+      - description    : The Widget Service
         name           : Widget Service
         output         : yaml
         supportEmail   : bozo@clown.com

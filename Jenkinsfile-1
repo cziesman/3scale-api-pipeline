@@ -167,6 +167,50 @@ pipeline {
             }
         }
 
+        stage("Create a Service") {
+            steps {
+                script {
+
+                    openshift.withCluster() {
+                        openshift.withProject("${env.CICD_NAMESPACE}") {
+
+                            def options = [
+                                    'authMode'      : ' --authentication-mode=',
+                                    'deploymentMode': ' --deployment-mode=',
+                                    'description'   : ' --description=',
+                                    'name'          : ' --name=',
+                                    'output'        : ' --output=',
+                                    'supportEmail'  : ' --support-email='
+                            ]
+
+                            SERVICES.each { service ->
+
+                                echo "service = ${service}"
+                                def params = params(options, service)
+
+                                commandLine = "3scale service apply ${params} ${env.DESTINATION} ${service.systemName}"
+                                echo "commandLine = ${commandLine}"
+                                jobId = newJob(commandLine)
+
+                                timeout(time: 20, unit: 'SECONDS') {
+                                    node {
+                                        pod = waitForPod(jobId)
+
+                                        waitForSuccessfulCompletion(pod)
+
+                                        jobOutput = openshift.raw("logs ${pod}").out
+                                        echo "jobOutput = ${jobOutput}"
+                                    }
+                                }
+
+                                openshift.raw("delete job ${jobId}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         stage("Import OpenAPI spec") {
             steps {
                 script {
@@ -175,10 +219,10 @@ pipeline {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
                             def options = [
-                                    'output'         : ' --output=',
-                                    'overrideUrl'    : ' --override-private-base-url',
-                                    'prefixMatching' : ' --prefix-matching',
-                                    'skipValidation' : ' --skip-openapi-validation',
+                                    'output'          : ' --output=',
+                                    'overrideUrl'     : ' --override-private-base-url',
+                                    'prefixMatching'  : ' --prefix-matching',
+                                    'skipValidation'  : ' --skip-openapi-validation',
                                     'targetSystemName': ' --target_system_name='
                             ]
 
@@ -209,45 +253,6 @@ pipeline {
                 }
             }
         }
-
-//        stage("Create a Service") {
-//            steps {
-//                script {
-//
-//                    openshift.withCluster() {
-//                        openshift.withProject("${env.CICD_NAMESPACE}") {
-//
-//                            def options = [
-//                                    'authentication-mode': ' --authentication-mode=',
-//                                    'deployment-mode'    : ' --deployment-mode=',
-//                                    'description'        : ' --description=',
-//                                    'name'               : ' --name=',
-//                                    'output'             : ' --output=',
-//                                    'support-email'      : ' --support-email=',
-//                                    'systemName'         : ' --system-name'
-//                            ]
-//
-//                            commandLine = "3scale service apply --insecure --name='${env.APP_SERVICE_NAME}' ${env.DESTINATION} ${env.APP_SYSTEM_NAME}"
-//                            echo "commandLine = ${commandLine}"
-//                            jobId = newJob(commandLine)
-//
-//                            timeout(time: 20, unit: 'SECONDS') {
-//                                node {
-//                                    pod = waitForPod(jobId)
-//
-//                                    waitForSuccessfulCompletion(pod)
-//
-//                                    jobOutput = openshift.raw("logs ${pod}").out
-//                                    echo "jobOutput = ${jobOutput}"
-//                                }
-//                            }
-//
-//                            openshift.raw("delete job ${jobId}")
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
         stage('Get list of services') {
             steps {
