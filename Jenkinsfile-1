@@ -93,7 +93,11 @@ String params(Map options, Map config) {
     params = " --insecure"
     config.each { item ->
 
+        echo "item = ${item}"
+
         item.each { key, value ->
+
+            echo "${key} :: ${value}"
 
             option = options[key]
 
