@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: api-pipeline-template
+  annotations:
+    description: "Creates a build config and a config map that are used to deploy an API to 3scale"
+objects:
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      labels:
+        app: ${API_NAME}
+    data:
+      ACCESS_TOKEN: ${ACCESS_TOKEN}
+      APP_BASE_NAME: ${API_NAME}
+      THREESCALE_SERVER_BASE_URL: ${THREESCALE_SERVER_BASE_URL}
+      application_yaml: |
+        applications:
+          - name        : ${APPLICATION_TITLE} API
+            description : The ${APPLICATION_TITLE} Application
+            plan        : ${APPLICATION_NAME}-unlimited
+            account     : ${THREESCALE_ACCOUNT}
+            service     : ${APPLICATION_NAME}-service
+            systemName  : ${APPLICATION_NAME}
+      applicationPlan_yaml: |
+        plans:
+          - systemName       : ${APPLICATION_NAME}-unlimited
+            name             : ${APPLICATION_TITLE} Unlimited
+            default          : true
+            enabled          : true
+            publish          : true
+            costPerMonth     : 0.0
+            setupFee         : 0.0
+            targetSystemName : ${APPLICATION_NAME}-service
+            trialPeriodDays  : 30
+      openapi_yaml: |
+        backends:
+          - openApiUrl       : ${API_OPENDOC_URL}
+            output           : json
+            skipValidation   : true
+            targetSystemName : ${APPLICATION_NAME}-service
+  - apiVersion: build.openshift.io/v1
+    kind: BuildConfig
+    metadata:
+      labels:
+        app: ${API_NAME}
+      name: ${APPLICATION_NAME}
+      namespace: ${CICD_NAMESPACE}
+    spec:
+      source:
+        git:
+          ref: ${GIT_BRANCH}
+          uri: ${GIT_URL}
+        sourceSecret:
+          name: ${GIT_SECRET}
+        type: Git
+      strategy:
+        jenkinsPipelineStrategy:
+          env:
+          - name: CONFIG_MAP
+            value: ${API_NAME}
+          - name: CICD_NAMESPACE
+            value: ${CICD_NAMESPACE}
+          jenkinsfilePath: Jenkinsfile
+        type: JenkinsPipeline
+parameters:
+  - name: ACCESS_TOKEN
+    description: "The access token used to connect to 3scale"
+    value: some-random-value
+  - name: API_NAME
+    description: "The internal name of the API. Must be unique"
+    value: widget
+  - name: API_OPENDOC_URL
+    description: "The URL where the OpenDoc description of the API can be read"
+    value: http://widget.example.com/api-docs.yaml
+  - name: APPLICATION_NAME
+    description: "The 3scale name of the application. Must be unique"
+    value: widget-app
+  - name: APPLICATION_TITLE
+    description: "The user friendly name of the application"
+    value: Widget
+  - name: CICD_NAMESPACE
+    description: "The namespace where the Jenkins instance is running"
+    value: jenkins
+  - name: GIT_BRANCH
+    description: "The name of the Git branch where the Jenkinsfile is located"
+    value: main
+  - name: GIT_SECRET
+    description: "The name of the source secret used to connect to the Git repository"
+    value: git-secret
+  - name: GIT_URL
+    description: "The URL of the Git repository for the Jenkinsfile"
+    value: https://git.example.com/apiproject/3scale-jenkins.git
+  - name: THREESCALE_ACCOUNT
+    description: "The username, email or user_id of the 3scale admin user"
+    value: john
+  - name: THREESCALE_SERVER_BASE_URL
+    description: "The base URL of the 3scale server, not including the scheme, e.g., HTTP or HTTPS"
+    value: 3scale-server.example.com
+
+
