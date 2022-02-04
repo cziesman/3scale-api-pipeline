@@ -70,9 +70,9 @@ String newJob(String commandLine) {
 String params(Map options, List config) {
 
     params = " --insecure"
-    config.each { application ->
+    config.each { item ->
 
-        application.each { key, value ->
+        item.each { key, value ->
 
             option = options[key]
 
@@ -241,6 +241,8 @@ pipeline {
 
                             APPLICATION_PLANS.each { plan ->
 
+                                echo "options.class = " + options.getClass()
+                                echo "plan.class = " + plan.getClass()
                                 def params = params(options, plan)
 
                                 commandLine = "3scale application-plan apply ${params} ${env.THREESCALE_SERVER} ${env.APP_SYSTEM_NAME} ${plan.systemName}"
