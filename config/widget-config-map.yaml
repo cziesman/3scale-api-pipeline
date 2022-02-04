@@ -3,6 +3,8 @@ apiVersion: v1
 metadata:
   name: widget
   namespace: jenkins
+  labels:
+    app: widget
 data:
   ACCESS_TOKEN: 23aff03d2f1f92a1e167c7012b752fbe7163242b9e6dee712dbf7b784d89beba
   APP_BASE_NAME: widget

@@ -1,34 +1,23 @@
 #!groovy
 
+IMAGE_NAME = "quay.io/redhat/3scale-toolbox"
+
 List APPLICATIONS
 List APPLICATION_PLANS
 List BACKENDS
 
-imageName = "quay.io/redhat/3scale-toolbox"
-
-String systemName(String name) {
-
-    String PUNCTUATION = "\\p{Punct}+";
-    String WHITESPACE = "\\s+";
-
-    return name
-            .replaceAll(PUNCTUATION, "")
-            .replaceAll(WHITESPACE, "-")
-            .toLowerCase()
-}
-
 String jobId() {
 
     strLength = 5
-    source = "abcdefghijklmnopqrstuvwxyz0123456789";
-    random = new Random();
+    source = "abcdefghijklmnopqrstuvwxyz0123456789"
+    random = new Random()
 
-    builder = new StringBuilder(strLength);
+    builder = new StringBuilder(strLength)
     for (int i = 0; i < strLength; i++) {
-        builder.append(source[random.nextInt(source.length() - 1)]);
+        builder.append(source[random.nextInt(source.length() - 1)])
     }
 
-    return "job-${env.APP_BASE_NAME}-" + builder.toString().toLowerCase();
+    return "job-${env.APP_BASE_NAME}-" + builder.toString().toLowerCase()
 }
 
 String waitForPod(String prefix) {
@@ -40,8 +29,8 @@ String waitForPod(String prefix) {
         pods = openshift.raw("get pods -o custom-columns=POD:.metadata.name --no-headers").out
         for (String item : pods.split("\n")) {
             if (item.startsWith(prefix)) {
-                podName = item;
-                break startsWith;
+                podName = item
+                break startsWith
             }
         }
     }
@@ -63,7 +52,7 @@ String newJob(String commandLine) {
 
     jobId = jobId()
 
-    openshift.raw("create job ${jobId} --image=${imageName} -- ${commandLine}")
+    openshift.raw("create job ${jobId} --image=${IMAGE_NAME} -- ${commandLine}")
 
     return jobId
 }
@@ -278,7 +267,6 @@ pipeline {
                                 }
 
                                 openshift.raw("delete job ${jobId}")
-
                             }
                         }
                     }
@@ -328,7 +316,6 @@ pipeline {
                                 }
 
                                 openshift.raw("delete job ${jobId}")
-
                             }
                         }
                     }

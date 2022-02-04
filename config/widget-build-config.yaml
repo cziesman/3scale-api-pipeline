@@ -3,6 +3,8 @@ apiVersion: build.openshift.io/v1
 metadata:
   name: widget-app
   namespace: jenkins
+  labels:
+    app: widget
 spec:
   nodeSelector: null
   output: {}
