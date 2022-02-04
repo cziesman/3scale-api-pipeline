@@ -15,7 +15,7 @@ data:
       description    : The widget App
       plan           : widget-unlimited
       account        : john
-      service        : widget-2-system
+      service        : widget-backend
       systemName     : widget-app
   applicationPlan_yaml: |
     plans:

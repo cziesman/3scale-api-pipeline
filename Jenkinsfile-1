@@ -339,55 +339,5 @@ pipeline {
             }
         }
 
-
-        stage("Create Backend") {
-            steps {
-                script {
-
-                    openshift.withCluster() {
-                        openshift.withProject("${env.CICD_NAMESPACE}") {
-
-//                            def options = [
-//                                    'account'       : ' --account=',
-//                                    'applicationKey': ' --application-key=',
-//                                    'description'   : ' --description=',
-//                                    'name'          : ' --name=',
-//                                    'output'        : ' --output=',
-//                                    'plan'          : ' --plan=',
-//                                    'redirectUrl'   : ' --redirect-url=',
-//                                    'resume'        : ' --resume',
-//                                    'service'       : ' --service=',
-//                                    'suspend'       : ' --suspend',
-//                                    'userKey'       : ' --user-key='
-//                            ]
-//
-//                            APPLICATIONS.each { application ->
-
-//                                def params = params(options, application)
-
-                                commandLine = "3scale backend apply  ${env.THREESCALE_SERVER} ${env.APP_BACKEND_ID}"
-                                echo "commandLine = ${commandLine}"
-                                jobId = newJob(commandLine)
-
-                                timeout(time: 20, unit: 'SECONDS') {
-                                    node {
-                                        pod = waitForPod(jobId)
-
-                                        waitForSuccessfulCompletion(pod)
-
-                                        jobOutput = openshift.raw("logs ${pod}").out
-                                        echo "jobOutput = ${jobOutput}"
-                                    }
-                                }
-
-                                openshift.raw("delete job ${jobId}")
-
-//                            }
-                        }
-                    }
-                }
-            }
-        }
-
     }
 }
