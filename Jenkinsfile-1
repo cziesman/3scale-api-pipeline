@@ -207,9 +207,7 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
-                            List plans = APPLICATION_PLANS
-
-                            plans.each { plan ->
+                            APPLICATION_PLANS.each { plan ->
 
                                 params = ""
                                 if (Boolean.TRUE.equals(plan.approvalRequired)) {
@@ -277,17 +275,38 @@ pipeline {
                     openshift.withCluster() {
                         openshift.withProject("${env.CICD_NAMESPACE}") {
 
-                            List applications = APPLICATIONS
+                            def options = [
+                                    'account'       : ' --account=',
+                                    'applicationKey': ' --application-key=',
+                                    'description'   : ' --description=',
+                                    'name'          : ' --name=',
+                                    'output'        : ' --output=',
+                                    'plan'          : ' --plan=',
+                                    'redirectUrl'   : ' --redirect-url=',
+                                    'resume'        : ' --resume',
+                                    'service'       : ' --service=',
+                                    'suspend'       : ' --suspend',
+                                    'userKey'       : ' --user-key='
+                            ]
 
-                            applications.each { application ->
+                            params = ""
+                            APPLICATIONS.each { application ->
 
                                 echo "application = ${application}"
                                 echo "application.class = " + application.getClass()
 
                                 application.each { entry ->
 
-                                    echo "${entry.key} :: ${entry.value}"
+                                    option = options[entry.key]
+
+                                    if (option != null) {
+                                        params += option.value
+                                        if (option?.value?.endsWith("=")) {
+                                            params += entry.value
+                                        }
+                                    }
                                 }
+                                echo "${params} = ${params}"
                             }
                         }
                     }
