@@ -88,6 +88,27 @@ String params(Map options, List config) {
     return params
 }
 
+String params(Map options, Map config) {
+
+    params = " --insecure"
+    config.each { item ->
+
+        item.each { key, value ->
+
+            option = options[key]
+
+            if (option != null) {
+                params += option
+                if (option.endsWith("=")) {
+                    params += "'${value}'"
+                }
+            }
+        }
+    }
+
+    return params
+}
+
 pipeline {
 
     agent {
