@@ -219,13 +219,13 @@ pipeline {
                                     'output'                   : ' --output=',
                                     'oidcIssuerEndpoint'       : ' --oidc-issuer-endpoint=',
                                     'oidcIssuerType'           : ' --oidc-issuer-type=',
-                                    'overridePrivateBaseUrl'   : ' --override-private-base-url',
-                                    'overridePrivateBasePath'  : ' --override-private-basepath',
-                                    'overridePublicBasePath'   : ' --override-public-basepath',
+                                    'overridePrivateBaseUrl'   : ' --override-private-base-url=',
+                                    'overridePrivateBasePath'  : ' --override-private-basepath=',
+                                    'overridePublicBasePath'   : ' --override-public-basepath=',
                                     'prefixMatching'           : ' --prefix-matching',
-                                    'productionPublicBaseUrl'  : ' --production-public-base-url',
+                                    'productionPublicBaseUrl'  : ' --production-public-base-url=',
                                     'skipValidation'           : ' --skip-openapi-validation',
-                                    'stagingPublicBaseUrl'     : ' --staging-public-base-url',
+                                    'stagingPublicBaseUrl'     : ' --staging-public-base-url=',
                                     'targetSystemName'         : ' --target_system_name='
                             ]
 
