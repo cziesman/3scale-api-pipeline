@@ -295,17 +295,16 @@ pipeline {
                                 echo "application = ${application}"
                                 echo "application.class = " + application.getClass()
 
-                                application.each { entry ->
+                                application.each { key, value ->
 
-                                    option = options[entry.key]
+                                    echo "${key} :: ${value}"
+                                    option = options[key]
                                     echo "option = ${option}"
 
                                     if (option != null) {
-                                        echo "option.value = ${option.value}"
-                                        params += option.value.toString()
-                                        if (option?.value?.toString().endsWith("=")) {
-                                            echo "entry.value = ${entry.value}"
-                                            params += entry.value.toString()
+                                        params += option
+                                        if (option.endsWith("=")) {
+                                            params += value
                                         }
                                     }
                                 }
