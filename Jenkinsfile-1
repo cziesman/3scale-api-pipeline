@@ -363,7 +363,7 @@ pipeline {
 //
 //                            APPLICATIONS.each { application ->
 
-                                def params = params(options, application)
+//                                def params = params(options, application)
 
                                 commandLine = "3scale backend apply  ${env.THREESCALE_SERVER} ${env.APP_BACKEND_ID}"
                                 echo "commandLine = ${commandLine}"
