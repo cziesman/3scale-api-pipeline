@@ -224,7 +224,7 @@ pipeline {
                                 echo "backend = ${backend}"
                                 def params = params(options, backend)
 
-                                commandLine = "3scale import openapi ${params} --destination=${env.DESTINATION} --backend ${env.APP_OPEN_API_URL}"
+                                commandLine = "3scale import openapi ${params} --destination=${env.DESTINATION} --backend ${backend.openApiUrl}"
                                 echo "commandLine = ${commandLine}"
                                 jobId = newJob(commandLine)
 
