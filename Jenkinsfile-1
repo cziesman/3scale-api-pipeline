@@ -70,7 +70,7 @@ String newJob(String commandLine) {
     return jobId
 }
 
-String params(Map options, Map config) {
+String params(Map options, List config) {
 
     params = "--insecure "
     config.each { application ->
@@ -310,7 +310,7 @@ pipeline {
                                     'userKey'       : ' --user-key='
                             ]
 
-                            params = params(options, APPLICATIONS)
+                            def params = params(options, APPLICATIONS)
                             echo "params = ${params}"
                         }
                     }
