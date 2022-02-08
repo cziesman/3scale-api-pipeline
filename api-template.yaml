@@ -8,6 +8,7 @@ objects:
   - apiVersion: v1
     kind: ConfigMap
     metadata:
+      name: ${API_NAME}
       labels:
         app: ${API_NAME}
     data:
