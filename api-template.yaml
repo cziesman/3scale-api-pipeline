@@ -67,35 +67,46 @@ parameters:
   - name: ACCESS_TOKEN
     description: "The access token used to connect to 3scale"
     value: some-random-value
+    required: true
   - name: API_NAME
     description: "The internal name of the API. Must be unique"
     value: widget
+    required: true
   - name: API_OPENDOC_URL
     description: "The URL where the OpenDoc description of the API can be read"
     value: http://widget.example.com/api-docs.yaml
+    required: true
   - name: APPLICATION_NAME
     description: "The 3scale name of the application. Must be unique"
     value: widget-app
+    required: true
   - name: APPLICATION_TITLE
     description: "The user friendly name of the application"
     value: Widget
+    required: true
   - name: CICD_NAMESPACE
     description: "The namespace where the Jenkins instance is running"
     value: jenkins
+    required: true
   - name: GIT_BRANCH
     description: "The name of the Git branch where the Jenkinsfile is located"
     value: main
+    required: true
   - name: GIT_SECRET
     description: "The name of the source secret used to connect to the Git repository"
     value: git-secret
+    required: true
   - name: GIT_URL
     description: "The URL of the Git repository for the Jenkinsfile"
     value: https://git.example.com/apiproject/3scale-jenkins.git
+    required: true
   - name: THREESCALE_ACCOUNT
     description: "The username, email or user_id of the 3scale admin user"
     value: john
+    required: true
   - name: THREESCALE_SERVER_BASE_URL
     description: "The base URL of the 3scale server, not including the scheme, e.g., HTTP or HTTPS"
     value: 3scale-server.example.com
+    required: true
 
 
